@@ -1,0 +1,75 @@
+basePath: /api/address
+definitions:
+  main.RequestAddressSearch:
+    properties:
+      query:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API Server for search GEOinfo
+  title: Todo geocode API
+  version: "1.0"
+paths:
+  /geocode:
+    post:
+      consumes:
+      - application/json
+      description: create a search query
+      parameters:
+      - description: query
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/main.RequestAddressSearch'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "404":
+          description: Not Found
+          schema:
+            type: error
+        "500":
+          description: Internal Server Error
+          schema:
+            type: error
+      summary: QueryGeocode
+      tags:
+      - geocode
+  /search:
+    post:
+      consumes:
+      - application/json
+      description: create a search query
+      parameters:
+      - description: query
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/main.RequestAddressSearch'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "404":
+          description: Not Found
+          schema:
+            type: error
+        "500":
+          description: Internal Server Error
+          schema:
+            type: error
+      summary: QuerySearch
+      tags:
+      - search
+swagger: "2.0"
