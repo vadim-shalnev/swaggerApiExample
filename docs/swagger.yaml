@@ -1,6 +1,13 @@
 basePath: /api/address
 definitions:
-  main.RequestAddressSearch:
+  github_vadim-shalnev.NewUser:
+    properties:
+      password:
+        type: string
+      user_name:
+        type: string
+    type: object
+  github_vadim-shalnev.RequestAddressSearch:
     properties:
       query:
         type: string
@@ -12,6 +19,65 @@ info:
   title: Todo geocode API
   version: "1.0"
 paths:
+  /api/login:
+    get:
+      consumes:
+      - application/json
+      description: User login with JWT token
+      parameters:
+      - description: JWT token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User successfully logged in
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: User login
+      tags:
+      - Authentication
+  /api/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user
+      parameters:
+      - description: User object for registration
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_vadim-shalnev.NewUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "404":
+          description: Not Found
+          schema:
+            type: error
+        "500":
+          description: Internal Server Error
+          schema:
+            type: error
+      summary: Register
+      tags:
+      - Reg in service
   /geocode:
     post:
       consumes:
@@ -23,7 +89,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/main.RequestAddressSearch'
+          $ref: '#/definitions/github_vadim-shalnev.RequestAddressSearch'
       produces:
       - application/json
       responses:
@@ -53,7 +119,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/main.RequestAddressSearch'
+          $ref: '#/definitions/github_vadim-shalnev.RequestAddressSearch'
       produces:
       - application/json
       responses:
