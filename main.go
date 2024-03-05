@@ -170,6 +170,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Write([]byte("Вы успешно авторизованы"))
 }
+
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		tokenString := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
@@ -224,6 +225,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			w.Write([]byte("ц-ц-ц, неправильный токен"))
 			return
 		}
+
 		next.ServeHTTP(w, r)
 	})
 }
@@ -254,6 +256,7 @@ func HandleSearch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	geocodeResponse, err := Geocode(SearchResp)
+
 	if err != nil {
 		fmt.Println(err)
 	}

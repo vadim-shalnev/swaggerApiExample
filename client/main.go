@@ -47,7 +47,7 @@ func main() {
 			return
 		}
 
-		token = response.T
+		token = response.T + "t"
 	}
 	fmt.Println(token)
 	req, err := http.NewRequest("GET", "http://localhost:8080/api/login", nil)
@@ -59,6 +59,7 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
+
 	bodyByte, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Println(err)
