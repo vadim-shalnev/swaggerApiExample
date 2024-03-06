@@ -5,12 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="79509455-0791-4ce8-ac74-35d8481e82e3" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Clean_Architecture/Authorisation/main.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Clean_Architecture/Handle/main.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Clean_Architecture/Logic/main.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Clean_Architecture/Controller/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Clean_Architecture/Repository/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Clean_Architecture/Service/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Clean_Architecture/docker-compose.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Clean_Architecture/Authorisation/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Clean_Architecture/Repository/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Clean_Architecture/Handle/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Clean_Architecture/Controller/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Clean_Architecture/Logic/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Clean_Architecture/Service/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/client/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,11 +48,14 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "DefaultGoTemplateProperty": "Go File",
+    "Go Build.go build aothorization.executor": "Run",
     "Go Build.go build github/vadim-shalnev.executor": "Run",
     "Go Build.go build github/vadim-shalnev/Clean_Architecture/Authorisation.executor": "Run",
     "Go Build.go build github/vadim-shalnev/Clean_Architecture/Handle.executor": "Run",
     "Go Build.go build github/vadim-shalnev/Clean_Architecture/Logic.executor": "Run",
     "Go Build.go build github/vadim-shalnev/client.executor": "Run",
+    "Go Build.go build handle.executor": "Run",
+    "Go Build.go build logic.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.go.formatter.settings.were.checked": "true",
@@ -81,6 +87,15 @@
       <filePath value="$PROJECT_DIR$" />
       <method v="2" />
     </configuration>
+    <configuration name="go build aothorization" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="swaggerApiExample" />
+      <working_directory value="$PROJECT_DIR$/Clean_Architecture/Authorisation" />
+      <kind value="PACKAGE" />
+      <package value="aothorization" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/Clean_Architecture/Authorisation/main.go" />
+      <method v="2" />
+    </configuration>
     <configuration name="go build github/vadim-shalnev" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="swaggerApiExample" />
       <working_directory value="$PROJECT_DIR$" />
@@ -90,33 +105,6 @@
       <filePath value="$PROJECT_DIR$/main.go" />
       <method v="2" />
     </configuration>
-    <configuration name="go build github/vadim-shalnev/Clean_Architecture/Authorisation" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="swaggerApiExample" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="github/vadim-shalnev/Clean_Architecture/Authorisation" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/Clean_Architecture/Authorisation/main.go" />
-      <method v="2" />
-    </configuration>
-    <configuration name="go build github/vadim-shalnev/Clean_Architecture/Handle" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="swaggerApiExample" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="github/vadim-shalnev/Clean_Architecture/Handle" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/Clean_Architecture/Handle/main.go" />
-      <method v="2" />
-    </configuration>
-    <configuration name="go build github/vadim-shalnev/Clean_Architecture/Logic" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="swaggerApiExample" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="github/vadim-shalnev/Clean_Architecture/Logic" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/Clean_Architecture/Logic/main.go" />
-      <method v="2" />
-    </configuration>
     <configuration name="go build github/vadim-shalnev/client" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="swaggerApiExample" />
       <working_directory value="$PROJECT_DIR$" />
@@ -124,6 +112,24 @@
       <package value="github/vadim-shalnev/client" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$/client/main.go" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go build handle" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="swaggerApiExample" />
+      <working_directory value="$PROJECT_DIR$/Clean_Architecture/Handle" />
+      <kind value="PACKAGE" />
+      <package value="handle" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/Clean_Architecture/Handle/main.go" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go build logic" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="swaggerApiExample" />
+      <working_directory value="$PROJECT_DIR$/Clean_Architecture/Logic" />
+      <kind value="PACKAGE" />
+      <package value="logic" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/Clean_Architecture/Logic/main.go" />
       <method v="2" />
     </configuration>
     <configuration default="true" type="GoTestRunConfiguration" factoryName="Go Test">
@@ -139,10 +145,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Go Build.go build github/vadim-shalnev/client" />
-        <item itemvalue="Go Build.go build github/vadim-shalnev/Clean_Architecture/Handle" />
-        <item itemvalue="Go Build.go build github/vadim-shalnev/Clean_Architecture/Authorisation" />
-        <item itemvalue="Go Build.go build github/vadim-shalnev/Clean_Architecture/Logic" />
+        <item itemvalue="Go Build.go build handle" />
         <item itemvalue="Go Build.go build github/vadim-shalnev" />
+        <item itemvalue="Go Build.go build aothorization" />
+        <item itemvalue="Go Build.go build logic" />
       </list>
     </recent_temporary>
   </component>

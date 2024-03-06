@@ -47,7 +47,7 @@ func main() {
 			return
 		}
 
-		token = response.T + "t"
+		token = response.T
 	}
 	fmt.Println(token)
 	req, err := http.NewRequest("GET", "http://localhost:8080/api/login", nil)
