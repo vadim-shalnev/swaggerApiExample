@@ -5,15 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="79509455-0791-4ce8-ac74-35d8481e82e3" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Clean_Architecture/Controller/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Clean_Architecture/Repository/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Clean_Architecture/Service/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Clean_Architecture/docker-compose.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Clean_Architecture/Authorisation/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Clean_Architecture/Repository/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Clean_Architecture/Handle/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Clean_Architecture/Controller/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Clean_Architecture/Logic/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Clean_Architecture/Service/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/client/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Clean_Architecture/Repository/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Clean_Architecture/Repository/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,7 +58,7 @@
     "git-widget-placeholder": "main",
     "go.import.settings.migrated": "true",
     "go.sdk.automatically.set": "true",
-    "last_opened_file_path": "/home/vubuntu/swaggerApiExample",
+    "last_opened_file_path": "/home/vubuntu/goboilerplate",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
@@ -77,7 +70,7 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Build.go build github/vadim-shalnev/client">
+  <component name="RunManager" selected="Go Build.go build aothorization">
     <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
       <module name="swaggerApiExample" />
       <working_directory value="$PROJECT_DIR$" />
@@ -89,7 +82,7 @@
     </configuration>
     <configuration name="go build aothorization" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="swaggerApiExample" />
-      <working_directory value="$PROJECT_DIR$/Clean_Architecture/Authorisation" />
+      <working_directory value="$PROJECT_DIR$/Clean_Architecture/Repository" />
       <kind value="PACKAGE" />
       <package value="aothorization" />
       <directory value="$PROJECT_DIR$" />
@@ -142,12 +135,19 @@
       <framework value="gotest" />
       <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="Go Build.go build aothorization" />
+      <item itemvalue="Go Build.go build github/vadim-shalnev" />
+      <item itemvalue="Go Build.go build github/vadim-shalnev/client" />
+      <item itemvalue="Go Build.go build handle" />
+      <item itemvalue="Go Build.go build logic" />
+    </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Build.go build aothorization" />
         <item itemvalue="Go Build.go build github/vadim-shalnev/client" />
         <item itemvalue="Go Build.go build handle" />
         <item itemvalue="Go Build.go build github/vadim-shalnev" />
-        <item itemvalue="Go Build.go build aothorization" />
         <item itemvalue="Go Build.go build logic" />
       </list>
     </recent_temporary>
@@ -155,7 +155,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-gosdk-2946fb9b3188-155fe4b6e3a0-org.jetbrains.plugins.go.sharedIndexes.bundled-GO-233.14475.38" />
+        <option value="bundled-gosdk-2946fb9b3188-155fe4b6e3a0-org.jetbrains.plugins.go.sharedIndexes.bundled-GO-233.14808.20" />
       </set>
     </attachedChunks>
   </component>

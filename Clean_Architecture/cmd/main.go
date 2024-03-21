@@ -8,9 +8,8 @@ import (
 	"github.com/ekomobile/dadata/v2"
 	"github.com/ekomobile/dadata/v2/api/model"
 	"github.com/ekomobile/dadata/v2/client"
-	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/jwtauth/v5"
-	httpSwagger "github.com/swaggo/http-swagger"
+	"github/vadim-shalnev/Clean_Architecture/Route"
 	_ "github/vadim-shalnev/docs"
 	"io/ioutil"
 	"net/http"
@@ -50,18 +49,7 @@ var tokenAuth *jwtauth.JWTAuth
 // @BasePath /api/address
 
 func main() {
-	r := chi.NewRouter()
-	r.Get("/api/login", Login)
-	r.Post("/api/register", Register)
-	r.Route("/api/address", func(r chi.Router) {
-		r.Use(AuthMiddleware)
-		r.Post("/search", HandleSearch)
-		r.Post("/geocode", HandleGeo)
-	})
-	r.Get("/swagger/*", httpSwagger.Handler(
-		httpSwagger.URL("http://localhost:8080/swagger/doc.json"), // Укажите путь к файлу swagger.json
-	))
-	http.ListenAndServe(":8080", r)
+	r := route.New_route()
 }
 
 // Register @Register
