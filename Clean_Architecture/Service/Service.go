@@ -1,19 +1,8 @@
 package Service
 
-import (
-	"context"
-	"encoding/json"
-	"errors"
-	"fmt"
-	"github.com/ekomobile/dadata/v2"
-	"github.com/ekomobile/dadata/v2/api/model"
-	"github.com/ekomobile/dadata/v2/client"
-	"github.com/go-chi/jwtauth/v5"
-	"io"
-	"io/ioutil"
-	"log"
-	"net/http"
-)
+/*
+const ApiKey string = "22d3fa86b8743e497b32195cbc690abc06b42436"
+const SecretKey string = "adf07bdd63b240ae60087efd2e72269b9c65cc91"
 
 func Register(User io.ReadCloser) (s.NewUserResponse, error) {
 
@@ -36,7 +25,7 @@ func Register(User io.ReadCloser) (s.NewUserResponse, error) {
 
 	err = Repository.Create(regData)
 	if err != nil {
-		return regData, err
+		return s.NewUserResponse{}, errors.New("не удалось добавить нового пользователя в БД")
 	}
 
 	return regData, nil
@@ -85,7 +74,7 @@ func RefreshToken(email, pawwsord string) string {
 	if err != nil {
 		log.Println(err)
 	}
-	err := Repository.RefreshToken(email, pawwsord, tokenString)
+	err = Repository.RefreshToken(email, pawwsord, tokenString)
 	if err != nil {
 		log.Println(err)
 	}
@@ -100,67 +89,84 @@ func UserInfo_Checker(email, password, token string) (bool, bool, bool) {
 	return Email, Password, Token
 }
 
-func HandleSearch(UserRequest io.ReadCloser) (s.requestQuery, error) {
+func Search(UserRequest io.ReadCloser) (s.RequestQuery, error) {
 
 	bodyJSON, err := ioutil.ReadAll(UserRequest)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		return s.RequestQuery{}, errors.New("не удалось прочитать запрос")
 	}
 
 	var SearchResp s.RequestUser
-	var requestSearch s.RequestAddress
 	var requestQuery s.RequestQuery
 
 	err = json.Unmarshal(bodyJSON, &SearchResp)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		return s.RequestQuery{}, errors.New("не удалось дессериализировать JSON")
 	}
 
-	resp, err := HandleWorker(SearchResp.RequestQuery.Query)
+	resp, err := HandleWorker(SearchResp)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		return s.RequestQuery{}, err
 	}
-	requestQuery.Query = resp.RequestQuery
+	requestQuery.Query = fmt.Sprintf("Широта: %s, Долгота: %s", resp.RequestSearch.Lng, resp.RequestSearch.Lat)
 
-	requestJSON, err := json.Marshal(requestQuery)
-	if err != nil {
-		log.Println(err)
-	}
-	return requestJSON, nil
+	return requestQuery, nil
 }
 
-func HandleAddress(UserRequest io.ReadCloser) (s.requestQuery, error) {
+func Address(UserRequest io.ReadCloser) (s.RequestQuery, error) {
 
 	bodyJSON, err := ioutil.ReadAll(UserRequest)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		return s.RequestQuery{}, errors.New("не удалось прочитать запрос")
 	}
 
 	var SearchResp s.RequestUser
+	var requestQuery s.RequestQuery
 
 	err = json.Unmarshal(bodyJSON, &SearchResp)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		return s.RequestQuery{}, errors.New("не удалось дессериализировать JSON")
 	}
 
-	var requestAddress s.RequestQuery
-
-	geocodeResponse, err := Geocode(SearchResp)
+	resp, err := HandleWorker(SearchResp)
 	if err != nil {
-		fmt.Println(err)
+		return s.RequestQuery{}, err
 	}
-	for _, v := range geocodeResponse {
-		requestAddress.Query = v.Result
-	}
+	requestQuery.Query = fmt.Sprintf("Отформатированный адресс %s", resp.Addres)
 
-	requestJSON, err := json.Marshal(requestAddress)
+	return requestQuery, nil
+}
+
+func HandleWorker(Qwery s.RequestUser) (s.RequestAddress, error) {
+	var requestQuery s.RequestAddress
+	cache, err := Repository.CacheChecker(Qwery)
 	if err != nil {
 		log.Println(err)
 	}
-	return requestJSON, nil
+	if cache {
+		requestQuery.Addres = cache.Addres
+		requestQuery.RequestSearch.Lat = cache.RequestSearch.Lat
+		requestQuery.RequestSearch.Lng = cache.RequestSearch.Lng
+		return requestQuery, nil
+	}
+
+	geocodeResponse, err := Geocode(Qwery.RequestQuery)
+	if err != nil {
+		return s.RequestAddress{}, errors.New("ошибка в работе dadata")
+	}
+	for _, v := range geocodeResponse {
+		requestQuery.RequestSearch.Lat = v.GeoLat
+		requestQuery.RequestSearch.Lng = v.GeoLon
+		requestQuery.Addres = v.Result
+	}
+	err = Repository.Select(Qwery)
+	if err != nil {
+		return s.RequestAddress{}, errors.New("ошибка запроса Select")
+	}
+	return requestQuery, nil
 }
 
-func Geocode(Querys RequestAddressSearch) ([]*model.Address, error) {
+func Geocode(Querys s.RequestQuery) ([]*model.Address, error) {
 
 	creds := client.Credentials{
 		ApiKeyValue:    ApiKey,
@@ -178,39 +184,5 @@ func Geocode(Querys RequestAddressSearch) ([]*model.Address, error) {
 	return result, nil
 
 }
-func HandleWorker() {
-	cache, err := Repository.CacheChecker(SearchResp.Email, SearchResp.RequestQuery.Query)
-	if err != nil {
-		log.Println(err)
-	}
-	if cache {
-		requestQuery.Query = cache
-		return requestQuery, nil
-	}
 
-	geocodeResponse, err := Geocode(SearchResp)
-	if err != nil {
-		fmt.Println(err)
-	}
-	for _, v := range geocodeResponse {
-		requestSearch.Lat = v.GeoLat
-		requestSearch.Lng = v.GeoLon
-		requestQuery.Query += fmt.Sprintf("Широта: %s Долгота %s", v.GeoLat, v.GeoLon)
-	}
-}
-func CacheChecker(Email, Query string) (string, error) {
-	cache, err := Repository.CacheChecker(SearchResp.Email, SearchResp.RequestQuery.Query)
-	if err != nil {
-		log.Println(err)
-	}
-	if !cache {
-		err = Repository.Select(SearchResp.Email, SearchResp.RequestQuery.Query)
-		if err != nil {
-			log.Println(err)
-		}
-	} else {
-		var request s.RequestQuery
-		request.Query = cache
-		return request, nil
-	}
-}
+*/

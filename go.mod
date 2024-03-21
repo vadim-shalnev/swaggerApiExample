@@ -1,9 +1,8 @@
-module github/vadim-shalnev
+module github.com/vadim-shalnev/swaggerApiExample
 
 go 1.19
 
 require (
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/ekomobile/dadata/v2 v2.10.0
 	github.com/go-chi/chi/v5 v5.0.12
 	github.com/go-chi/jwtauth/v5 v5.3.0

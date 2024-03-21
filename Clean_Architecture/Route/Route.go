@@ -1,9 +1,9 @@
 package Route
 
 import (
-	Controller "Controller"
 	"github.com/go-chi/chi/v5"
 	httpSwagger "github.com/swaggo/http-swagger"
+	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Controller"
 	"net/http"
 )
 
