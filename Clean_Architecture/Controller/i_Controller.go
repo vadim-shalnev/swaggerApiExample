@@ -9,6 +9,14 @@ import (
 
 type Controller struct {
 	Service service.UserService
+	Auth    Auth
+}
+type Auth interface {
+	Register(w http.ResponseWriter, r *http.Request)
+	Login(w http.ResponseWriter, r *http.Request)
+	AuthMiddleware(next http.Handler) http.Handler
+	HandleSearch(w http.ResponseWriter, r *http.Request)
+	HandleGeo(w http.ResponseWriter, r *http.Request)
 }
 
 func NewController(service service.UserService) *Controller {

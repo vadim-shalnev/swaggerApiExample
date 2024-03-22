@@ -7,14 +7,15 @@ import (
 	"net/http"
 )
 
-func New_route() http.Handler {
+func New_router(controllers *Controller.Controller) http.Handler {
 	r := chi.NewRouter()
-	r.Get("/api/login", Controller.Login)
-	r.Post("/api/register", Controller.Register)
+	controller := controllers.Auth
+	r.Get("/api/login", controller.Login)
+	r.Post("/api/register", controller.Register)
 	r.Route("/api/address", func(r chi.Router) {
-		r.Use(Controller.AuthMiddleware)
-		r.Post("/search", Controller.HandleSearch)
-		r.Post("/geocode", Controller.HandleGeo)
+		r.Use(controller.AuthMiddleware)
+		r.Post("/search", controller.HandleSearch)
+		r.Post("/geocode", controller.HandleGeo)
 	})
 	r.Get("/swagger/*", httpSwagger.Handler(
 		httpSwagger.URL("http://localhost:8080/swagger/doc.json"), // Укажите путь к файлу swagger.json

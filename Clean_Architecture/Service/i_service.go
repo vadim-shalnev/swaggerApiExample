@@ -16,25 +16,28 @@ import (
 	"log"
 )
 
-type UserService interface {
-	Register(body io.ReadCloser) (mod.NewUserResponse, error)
-	Login(token string, body io.ReadCloser) (mod.NewUserResponse, error)
-	Search(body io.ReadCloser) (interface{}, error)
-	Address(body io.ReadCloser) (interface{}, error)
-	UserInfoChecker(email, password, token string) (bool, mod.NewUserResponse, bool)
-}
-
 const (
-	ApiKey    = "someapi"
-	SecretKey = "somekey"
+	ApiKey    = "22d3fa86b8743e497b32195cbc690abc06b42436"
+	SecretKey = "adf07bdd63b240ae60087efd2e72269b9c65cc91"
 )
 
 type UserServiceImpl struct {
 	repo repository.Repository
 }
 
-func NewUserServiceImpl(repo repository.Repository) *UserServiceImpl {
-	return &UserServiceImpl{repo: repo}
+type UserService interface {
+	Register(body io.ReadCloser) (mod.NewUserResponse, error)
+	Login(token string, body io.ReadCloser) (mod.NewUserResponse, error)
+	Search(body io.ReadCloser) (interface{}, error)
+	Address(body io.ReadCloser) (interface{}, error)
+	UserInfoChecker(email, password, token string) (bool, bool, bool)
+	HandleWorker(query mod.RequestUser) (mod.RequestAddress, error)
+	RefreshToken(email, password string) string
+	Geocode(query mod.RequestQuery) ([]*model.Address, error)
+}
+
+func NewUserServiceImpl(repository repository.Repository) *UserServiceImpl {
+	return &UserServiceImpl{repo: repository}
 }
 
 func (s *UserServiceImpl) Register(userBody io.ReadCloser) (mod.NewUserResponse, error) {
@@ -83,7 +86,7 @@ func (s *UserServiceImpl) Login(userToken string, userBody io.ReadCloser) (mod.N
 		return mod.NewUserResponse{}, errors.New("invalid password")
 	}
 	if !tokenValid {
-		freshToken := RefreshToken(regData.Email, regData.Password)
+		freshToken := s.RefreshToken(regData.Email, regData.Password)
 		regData.TokenString.Token = freshToken
 		return mod.NewUserResponse{}, errors.New("you have successfully logged out of the service")
 	}
@@ -98,7 +101,7 @@ func (s *UserServiceImpl) UserInfoChecker(email, password, token string) (bool, 
 	return emailValid, passwordValid, tokenValid
 }
 
-func (s *UserServiceImpl) Search(userRequest io.ReadCloser) (mod.RequestQuery, error) {
+func (s *UserServiceImpl) Search(userRequest io.ReadCloser) (interface{}, error) {
 	bodyJSON, err := ioutil.ReadAll(userRequest)
 	if err != nil {
 		return mod.RequestQuery{}, errors.New("failed to read request")
@@ -121,7 +124,7 @@ func (s *UserServiceImpl) Search(userRequest io.ReadCloser) (mod.RequestQuery, e
 	return requestQuery, nil
 }
 
-func (s *UserServiceImpl) Address(userRequest io.ReadCloser) (mod.RequestQuery, error) {
+func (s *UserServiceImpl) Address(userRequest io.ReadCloser) (interface{}, error) {
 	bodyJSON, err := ioutil.ReadAll(userRequest)
 	if err != nil {
 		return mod.RequestQuery{}, errors.New("failed to read request")
@@ -146,11 +149,11 @@ func (s *UserServiceImpl) Address(userRequest io.ReadCloser) (mod.RequestQuery, 
 
 func (s *UserServiceImpl) HandleWorker(query mod.RequestUser) (mod.RequestAddress, error) {
 	var requestQuery mod.RequestAddress
-	cache, err := s.repo.CacheChecker(query)
+	ok, cache, err := s.repo.CacheChecker(query)
 	if err != nil {
 		log.Println(err)
 	}
-	if cache {
+	if ok {
 		requestQuery.Addres = cache.Addres
 		requestQuery.RequestSearch.Lat = cache.RequestSearch.Lat
 		requestQuery.RequestSearch.Lng = cache.RequestSearch.Lng
@@ -166,7 +169,7 @@ func (s *UserServiceImpl) HandleWorker(query mod.RequestUser) (mod.RequestAddres
 		requestQuery.RequestSearch.Lng = v.GeoLon
 		requestQuery.Addres = v.Result
 	}
-	err = s.repo.Select(query)
+	err = s.repo.Insert(query)
 	if err != nil {
 		return mod.RequestAddress{}, errors.New("Select query error")
 	}
@@ -196,13 +199,13 @@ func TokenGenerate(email, password string) (string, error) {
 	return tokenString, nil
 }
 
-func RefreshToken(email, password string) string {
+func (s *UserServiceImpl) RefreshToken(email, password string) string {
 	tokenAuth := jwtauth.New("HS256", []byte("secret"), nil)
 	_, tokenString, err := tokenAuth.Encode(map[string]interface{}{"Username": email, "Password": password})
 	if err != nil {
 		log.Println(err)
 	}
-	err = repository.RefreshToken(email, password, tokenString)
+	err = s.repo.RefreshToken(email, password, tokenString)
 	if err != nil {
 		log.Println(err)
 	}
