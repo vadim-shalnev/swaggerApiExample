@@ -2,33 +2,16 @@ package Controller
 
 import (
 	"encoding/json"
-	"io"
+	service "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Service"
 	"net/http"
 	"strings"
 )
 
 type Controller struct {
-	Service UserService
+	Service service.UserService
 }
 
-type UserService interface {
-	Register(body io.ReadCloser) (NewUserResponse, error)
-	Login(token string, body io.ReadCloser) (NewUserResponse, error)
-	Search(body io.ReadCloser) (interface{}, error)
-	Address(body io.ReadCloser) (interface{}, error)
-	UserInfoChecker(email, password, token string) (bool, NewUserResponse, bool)
-}
-
-type TokenString struct {
-	Token string `json:"auth"`
-}
-type NewUserResponse struct {
-	Email       string      `json:"email"`
-	Password    string      `json:"password"`
-	TokenString TokenString `json:"token"`
-}
-
-func NewController(service UserService) *Controller {
+func NewController(service service.UserService) *Controller {
 	return &Controller{Service: service}
 }
 

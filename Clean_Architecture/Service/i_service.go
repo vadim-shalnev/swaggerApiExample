@@ -10,10 +10,19 @@ import (
 	"github.com/ekomobile/dadata/v2/client"
 	"github.com/go-chi/jwtauth/v5"
 	mod "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Models"
+	repository "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Repository"
 	"io"
 	"io/ioutil"
 	"log"
 )
+
+type UserService interface {
+	Register(body io.ReadCloser) (mod.NewUserResponse, error)
+	Login(token string, body io.ReadCloser) (mod.NewUserResponse, error)
+	Search(body io.ReadCloser) (interface{}, error)
+	Address(body io.ReadCloser) (interface{}, error)
+	UserInfoChecker(email, password, token string) (bool, mod.NewUserResponse, bool)
+}
 
 const (
 	ApiKey    = "someapi"
