@@ -1,6 +1,7 @@
 package Controller
 
 import (
+	"context"
 	"encoding/json"
 	service "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Service"
 	"net/http"
@@ -24,7 +25,7 @@ func NewController(service service.UserService) *Controller {
 }
 
 func (c *Controller) Register(w http.ResponseWriter, r *http.Request) {
-	UserInfo, err := c.Service.Register(r.Body)
+	UserInfo, err := c.Service.Register(r.Context(), r.Body)
 	if err != nil {
 		handleError(w, err)
 		return
@@ -34,7 +35,8 @@ func (c *Controller) Register(w http.ResponseWriter, r *http.Request) {
 
 func (c *Controller) Login(w http.ResponseWriter, r *http.Request) {
 	Usertoken := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
-	UserInfo, err := c.Service.Login(Usertoken, r.Body)
+	ctx := context.WithValue(r.Context(), "jwt_token", Usertoken)
+	UserInfo, err := c.Service.Login(ctx, r.Body)
 	if err != nil {
 		handleError(w, err)
 		return
@@ -45,7 +47,7 @@ func (c *Controller) Login(w http.ResponseWriter, r *http.Request) {
 func (c *Controller) AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		Usertoken := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
-		_, _, token := c.Service.UserInfoChecker("", "", Usertoken)
+		_, _, token := c.Service.UserInfoChecker(r.Context(), "", "", Usertoken)
 		if !token {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
@@ -55,7 +57,7 @@ func (c *Controller) AuthMiddleware(next http.Handler) http.Handler {
 }
 
 func (c *Controller) HandleSearch(w http.ResponseWriter, r *http.Request) {
-	respSearch, err := c.Service.Search(r.Body)
+	respSearch, err := c.Service.Search(r.Context(), r.Body)
 	if err != nil {
 		handleError(w, err)
 		return
@@ -64,7 +66,7 @@ func (c *Controller) HandleSearch(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) HandleGeo(w http.ResponseWriter, r *http.Request) {
-	respGeo, err := c.Service.Address(r.Body)
+	respGeo, err := c.Service.Address(r.Context(), r.Body)
 	if err != nil {
 		handleError(w, err)
 		return

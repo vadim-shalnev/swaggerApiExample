@@ -26,13 +26,13 @@ type UserServiceImpl struct {
 }
 
 type UserService interface {
-	Register(body io.ReadCloser) (mod.NewUserResponse, error)
-	Login(token string, body io.ReadCloser) (mod.NewUserResponse, error)
-	Search(body io.ReadCloser) (interface{}, error)
-	Address(body io.ReadCloser) (interface{}, error)
-	UserInfoChecker(email, password, token string) (bool, bool, bool)
-	HandleWorker(query mod.RequestUser) (mod.RequestAddress, error)
-	RefreshToken(email, password string) string
+	Register(ctx context.Context, userBody io.ReadCloser) (mod.NewUserResponse, error)
+	Login(ctx context.Context, userBody io.ReadCloser) (mod.NewUserResponse, error)
+	Search(ctx context.Context, userRequest io.ReadCloser) (interface{}, error)
+	Address(ctx context.Context, userRequest io.ReadCloser) (interface{}, error)
+	UserInfoChecker(ctx context.Context, email, password, token string) (bool, bool, bool)
+	HandleWorker(ctx context.Context, query mod.RequestQuery) (mod.RequestAddress, error)
+	RefreshToken(ctx context.Context, email, password string) string
 	Geocode(query mod.RequestQuery) ([]*model.Address, error)
 }
 
@@ -40,9 +40,8 @@ func NewUserServiceImpl(repository repository.Repository) *UserServiceImpl {
 	return &UserServiceImpl{repo: repository}
 }
 
-func (s *UserServiceImpl) Register(userBody io.ReadCloser) (mod.NewUserResponse, error) {
-	var regData mod.NewUserResponse
-
+func (s *UserServiceImpl) Register(ctx context.Context, userBody io.ReadCloser) (mod.NewUserResponse, error) {
+	var regData mod.NewUserRequest
 	bodyJSON, err := ioutil.ReadAll(userBody)
 	if err != nil {
 		return mod.NewUserResponse{}, errors.New("failed to read request")
@@ -56,18 +55,21 @@ func (s *UserServiceImpl) Register(userBody io.ReadCloser) (mod.NewUserResponse,
 	if err != nil {
 		return mod.NewUserResponse{}, err
 	}
-	regData.TokenString.Token = tokenAuth
+	var userResponse mod.NewUserResponse
+	userResponse.Email = regData.Email
+	userResponse.Token.Token = tokenAuth
+	userResponse.Role = regData.Role
 
-	err = s.repo.CreateUser(regData)
+	err = s.repo.CreateUser(ctx, regData)
 	if err != nil {
 		return mod.NewUserResponse{}, errors.New("failed to add new user to the database")
 	}
 
-	return regData, nil
+	return userResponse, nil
 }
 
-func (s *UserServiceImpl) Login(userToken string, userBody io.ReadCloser) (mod.NewUserResponse, error) {
-	var regData mod.NewUserResponse
+func (s *UserServiceImpl) Login(ctx context.Context, userBody io.ReadCloser) (mod.NewUserResponse, error) {
+	var regData mod.UserRequest
 
 	bodyJSON, err := ioutil.ReadAll(userBody)
 	if err != nil {
@@ -77,79 +79,82 @@ func (s *UserServiceImpl) Login(userToken string, userBody io.ReadCloser) (mod.N
 	if err != nil {
 		return mod.NewUserResponse{}, errors.New("failed to deserialize JSON")
 	}
+	var userResponse mod.NewUserResponse
+	userResponse.Email = regData.Email
 
-	emailValid, passwordValid, tokenValid := s.UserInfoChecker(regData.Email, regData.Password, userToken)
+	userToken := ctx.Value("jwt_token").(string)
+	emailValid, passwordValid, tokenValid := s.UserInfoChecker(ctx, regData.Email, regData.Password, userToken)
 	if !emailValid {
-		return mod.NewUserResponse{}, errors.New("invalid email")
+		return userResponse, errors.New("invalid email")
 	}
 	if !passwordValid {
-		return mod.NewUserResponse{}, errors.New("invalid password")
+		return userResponse, errors.New("invalid password")
 	}
 	if !tokenValid {
-		freshToken := s.RefreshToken(regData.Email, regData.Password)
-		regData.TokenString.Token = freshToken
-		return mod.NewUserResponse{}, errors.New("you have successfully logged out of the service")
+		freshToken := s.RefreshToken(ctx, regData.Email, regData.Password)
+		userResponse.Token.Token = freshToken
+		return userResponse, errors.New("you have successfully logged out of the service")
 	}
 
-	return regData, nil
+	return userResponse, nil
 }
 
-func (s *UserServiceImpl) UserInfoChecker(email, password, token string) (bool, bool, bool) {
-	emailValid := s.repo.CheckEmail(email)
-	passwordValid := s.repo.CheckPassword(password)
-	tokenValid := s.repo.CheckToken(token)
+func (s *UserServiceImpl) UserInfoChecker(ctx context.Context, email, password, token string) (bool, bool, bool) {
+	emailValid := s.repo.CheckEmail(ctx, email)
+	passwordValid := s.repo.CheckPassword(ctx, password)
+	tokenValid := s.repo.CheckToken(ctx, token)
 	return emailValid, passwordValid, tokenValid
 }
 
-func (s *UserServiceImpl) Search(userRequest io.ReadCloser) (interface{}, error) {
+func (s *UserServiceImpl) Search(ctx context.Context, userRequest io.ReadCloser) (interface{}, error) {
 	bodyJSON, err := ioutil.ReadAll(userRequest)
 	if err != nil {
 		return mod.RequestQuery{}, errors.New("failed to read request")
 	}
 
-	var searchResp mod.RequestUser
-	var requestQuery mod.RequestQuery
+	var searchRequest mod.RequestQuery
+	var responseQuery mod.RequestQuery
 
-	err = json.Unmarshal(bodyJSON, &searchResp)
+	err = json.Unmarshal(bodyJSON, &searchRequest)
 	if err != nil {
 		return mod.RequestQuery{}, errors.New("failed to deserialize JSON")
 	}
 
-	resp, err := s.HandleWorker(searchResp)
+	resp, err := s.HandleWorker(ctx, searchRequest)
 	if err != nil {
 		return mod.RequestQuery{}, err
 	}
-	requestQuery.Query = fmt.Sprintf("Latitude: %s, Longitude: %s", resp.RequestSearch.Lng, resp.RequestSearch.Lat)
+	responseQuery.Query = fmt.Sprintf("Latitude: %s, Longitude: %s", resp.RequestSearch.Lng, resp.RequestSearch.Lat)
 
-	return requestQuery, nil
+	return responseQuery, nil
 }
 
-func (s *UserServiceImpl) Address(userRequest io.ReadCloser) (interface{}, error) {
+func (s *UserServiceImpl) Address(ctx context.Context, userRequest io.ReadCloser) (interface{}, error) {
 	bodyJSON, err := ioutil.ReadAll(userRequest)
 	if err != nil {
 		return mod.RequestQuery{}, errors.New("failed to read request")
 	}
 
-	var searchResp mod.RequestUser
-	var requestQuery mod.RequestQuery
+	var searchRequest mod.RequestQuery
+	var responseQuery mod.RequestQuery
 
-	err = json.Unmarshal(bodyJSON, &searchResp)
+	err = json.Unmarshal(bodyJSON, &searchRequest)
 	if err != nil {
 		return mod.RequestQuery{}, errors.New("failed to deserialize JSON")
 	}
 
-	resp, err := s.HandleWorker(searchResp)
+	resp, err := s.HandleWorker(ctx, searchRequest)
 	if err != nil {
 		return mod.RequestQuery{}, err
 	}
-	requestQuery.Query = fmt.Sprintf("Formatted address: %s", resp.Addres)
+	responseQuery.Query = fmt.Sprintf("Formatted address: %s", resp.Addres)
 
-	return requestQuery, nil
+	return responseQuery, nil
 }
 
-func (s *UserServiceImpl) HandleWorker(query mod.RequestUser) (mod.RequestAddress, error) {
+func (s *UserServiceImpl) HandleWorker(ctx context.Context, query mod.RequestQuery) (mod.RequestAddress, error) {
 	var requestQuery mod.RequestAddress
-	ok, cache, err := s.repo.CacheChecker(query)
+	ok, cache, err := s.repo.CacheChecker(ctx, query)
 	if err != nil {
 		log.Println(err)
 	}
@@ -160,7 +165,7 @@ func (s *UserServiceImpl) HandleWorker(query mod.RequestUser) (mod.RequestAddres
 		return requestQuery, nil
 	}
 
-	geocodeResponse, err := s.Geocode(query.RequestQuery)
+	geocodeResponse, err := s.Geocode(query)
 	if err != nil {
 		return mod.RequestAddress{}, errors.New("error in dadata operation")
 	}
@@ -169,7 +174,7 @@ func (s *UserServiceImpl) HandleWorker(query mod.RequestUser) (mod.RequestAddres
 		requestQuery.RequestSearch.Lng = v.GeoLon
 		requestQuery.Addres = v.Result
 	}
-	err = s.repo.Insert(query)
+	err = s.repo.Insert(ctx, query)
 	if err != nil {
 		return mod.RequestAddress{}, errors.New("Select query error")
 	}
@@ -192,20 +197,26 @@ func (s *UserServiceImpl) Geocode(query mod.RequestQuery) ([]*model.Address, err
 
 func TokenGenerate(email, password string) (string, error) {
 	tokenAuth := jwtauth.New("HS256", []byte("secret"), nil)
-	_, tokenString, err := tokenAuth.Encode(map[string]interface{}{"Username": email, "Password": password})
+	_, tokenString, err := tokenAuth.Encode(map[string]interface{}{
+		"Username": email,
+		"Password": password,
+	})
 	if err != nil {
-		return "regData", errors.New("token generation error")
+		return "", errors.New("token generation error")
 	}
 	return tokenString, nil
 }
 
-func (s *UserServiceImpl) RefreshToken(email, password string) string {
+func (s *UserServiceImpl) RefreshToken(ctx context.Context, email, password string) string {
 	tokenAuth := jwtauth.New("HS256", []byte("secret"), nil)
-	_, tokenString, err := tokenAuth.Encode(map[string]interface{}{"Username": email, "Password": password})
+	_, tokenString, err := tokenAuth.Encode(map[string]interface{}{
+		"Username": email,
+		"Password": password,
+	})
 	if err != nil {
 		log.Println(err)
 	}
-	err = s.repo.RefreshToken(email, password, tokenString)
+	err = s.repo.RefreshToken(ctx, email, password, tokenString)
 	if err != nil {
 		log.Println(err)
 	}

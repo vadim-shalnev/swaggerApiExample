@@ -7,6 +7,7 @@ import (
 	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Route"
 	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Service"
 	"log"
+	"net/http"
 )
 
 func main() {
@@ -19,6 +20,8 @@ func main() {
 	repo := repository.NewRepositoryImpl(db)
 	serv := Service.NewUserServiceImpl(repo)
 	contr := Controller.NewController(serv)
-	Route.New_router(contr)
+	router := Route.New_router(contr)
+
+	http.ListenAndServe(":8080", router)
 
 }
