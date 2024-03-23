@@ -3,6 +3,7 @@ package Controller
 import (
 	"context"
 	"encoding/json"
+	"github.com/gorilla/mux"
 	service "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Service"
 	"net/http"
 	"strings"
@@ -18,6 +19,7 @@ type Auth interface {
 	AuthMiddleware(next http.Handler) http.Handler
 	HandleSearch(w http.ResponseWriter, r *http.Request)
 	HandleGeo(w http.ResponseWriter, r *http.Request)
+	GetUser(w http.ResponseWriter, r *http.Request)
 }
 
 func NewController(service service.UserService) *Controller {
@@ -43,6 +45,18 @@ func (c *Controller) Login(w http.ResponseWriter, r *http.Request) {
 	}
 	sendJSONResponse(w, UserInfo)
 }
+func (c *Controller) GetUser(w http.ResponseWriter, r *http.Request) {
+	Usertoken := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
+	ctx := context.WithValue(r.Context(), "jwt_token", Usertoken)
+	vars := mux.Vars(r)
+	userID := vars["id"]
+	UserInfo, err := c.Service.GetUser(ctx, userID)
+	if err != nil {
+		handleError(w, err)
+		return
+	}
+	sendJSONResponse(w, UserInfo)
+}
 
 func (c *Controller) AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -57,7 +71,9 @@ func (c *Controller) AuthMiddleware(next http.Handler) http.Handler {
 }
 
 func (c *Controller) HandleSearch(w http.ResponseWriter, r *http.Request) {
-	respSearch, err := c.Service.Search(r.Context(), r.Body)
+	Usertoken := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
+	ctx := context.WithValue(r.Context(), "jwt_token", Usertoken)
+	respSearch, err := c.Service.Search(ctx, r.Body)
 	if err != nil {
 		handleError(w, err)
 		return
@@ -66,7 +82,9 @@ func (c *Controller) HandleSearch(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) HandleGeo(w http.ResponseWriter, r *http.Request) {
-	respGeo, err := c.Service.Address(r.Context(), r.Body)
+	Usertoken := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
+	ctx := context.WithValue(r.Context(), "jwt_token", Usertoken)
+	respGeo, err := c.Service.Address(ctx, r.Body)
 	if err != nil {
 		handleError(w, err)
 		return

@@ -16,17 +16,16 @@ type Repository interface {
 	CreateUser(ctx context.Context, user mod.NewUserRequest) error
 	CheckEmail(ctx context.Context, email string) bool
 	CheckPassword(ctx context.Context, password string) bool
-	CheckToken(ctx context.Context, token string) bool
-	RefreshToken(ctx context.Context, email, password, newToken string) error
-	CacheChecker(ctx context.Context, query mod.RequestQuery) (bool, mod.RequestAddress, error)
+	CacheChecker(ctx context.Context, userID, historyCount int) (mod.RequestAddress, error)
 	Select(ctx context.Context, query mod.UserRequest) error
 	Insert(ctx context.Context, query mod.RequestUser) error
 	Update(ctx context.Context, query mod.RequestUser) error
 	Delete(ctx context.Context, query mod.RequestUser) error
-	GetAll(ctx context.Context, query mod.RequestUser) ([]mod.RequestAddress, error)
+	GetAll(ctx context.Context, query mod.RequestUser, colomsCount int) ([]mod.RequestAddress, error)
 	GetById(ctx context.Context, query mod.RequestUser) (mod.RequestAddress, error)
-	GetByEmail(ctx context.Context, query mod.RequestUser) (mod.RequestAddress, error)
+	GetByEmail(ctx context.Context, email string) (mod.RequestAddress, error)
 	List(ctx context.Context, query mod.RequestUser) ([]mod.RequestAddress, error)
+	GetUser(ctx context.Context, id int) (mod.NewUserResponse, error)
 }
 
 func NewRepositoryImpl(db *sql.DB) *RepositoryImpl {
@@ -34,12 +33,28 @@ func NewRepositoryImpl(db *sql.DB) *RepositoryImpl {
 }
 
 func (r *RepositoryImpl) CreateUser(ctx context.Context, user mod.NewUserRequest) error {
-	_, err := r.DB.Exec("INSERT INTO users (email, password, token) VALUES ($1, $2, $3)", user.Email, user.Password, user.TokenString.Token)
+	_, err := r.DB.Exec("INSERT INTO users (email, password, role, created_at, deleted_at) VALUES ($1, $2, $3, CURRENT_TIMESTAMP, NULL)", user.Email, user.Password, user.Role)
 	if err != nil {
 		log.Println("Error creating user:", err)
 		return errors.New("failed to create user")
 	}
 	return nil
+}
+
+// получаем пользователя по id из базы данных
+func (r *RepositoryImpl) GetUser(ctx context.Context, id int) (mod.NewUserResponse, error) {
+	var user mod.NewUserResponse
+	var isDel sql.NullTime
+	err := r.DB.QueryRow("SELECT email, role, deleted_at FROM users WHERE id = $1", id).Scan(&user.Email, &user.Role, &isDel)
+	if err != nil {
+		log.Println("Error getting user:", err)
+		return mod.NewUserResponse{}, errors.New("failed to get user")
+	}
+	if isDel.Valid {
+		return user, nil
+	} else {
+		return mod.NewUserResponse{}, errors.New("user not found")
+	}
 }
 
 func (r *RepositoryImpl) CheckEmail(ctx context.Context, email string) bool {
@@ -57,28 +72,10 @@ func (r *RepositoryImpl) CheckPassword(ctx context.Context, password string) boo
 	return true
 }
 
-func (r *RepositoryImpl) CheckToken(ctx context.Context, token string) bool {
-	var count int
-	err := r.DB.QueryRow("SELECT COUNT(*) FROM users WHERE token = $1", token).Scan(&count)
-	if err != nil {
-		log.Println("Error checking token:", err)
-		return false
-	}
-	return count > 0
-}
-
-func (r *RepositoryImpl) RefreshToken(ctx context.Context, email, password, newToken string) error {
-	_, err := r.DB.Exec("UPDATE users SET token = $1 WHERE email = $2 AND password = $3", newToken, email, password)
-	if err != nil {
-		log.Println("Error refreshing token:", err)
-		return errors.New("failed to refresh token")
-	}
-	return nil
-}
-
-func (r *RepositoryImpl) CacheChecker(ctx context.Context, query mod.RequestQuery) (bool, mod.RequestAddress, error) {
-	// Implement cache checking logic here
-	return true, mod.RequestAddress{}, nil
+func (r *RepositoryImpl) CacheChecker(ctx context.Context, query mod.RequestQuery) (mod.RequestAddress, error) {
+	// ходим в базу поисковых запросов и базу ответов дадата
+	// если есть ответ то используем его и отдаем дальше
+	return mod.RequestAddress{}, nil
 }
 
 func (r *RepositoryImpl) Select(ctx context.Context, query mod.UserRequest) error {
@@ -100,7 +97,8 @@ func (r *RepositoryImpl) Delete(ctx context.Context, query mod.RequestUser) erro
 	panic("implement me")
 }
 
-func (r *RepositoryImpl) GetAll(ctx context.Context, query mod.RequestUser) ([]mod.RequestAddress, error) {
+// Ходит по базам и собирает указанное количество строк
+func (r *RepositoryImpl) GetAll(ctx context.Context, query mod.RequestUser, colomsCount int) ([]mod.RequestAddress, error) {
 	//TODO implement me
 	panic("implement me")
 }
