@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Controller"
 	repository "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Repository"
-	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Route"
+	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Router"
 	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Service"
 	"log"
 	"net/http"
@@ -20,7 +20,7 @@ func main() {
 	repo := repository.NewRepositoryImpl(db)
 	serv := Service.NewUserServiceImpl(repo)
 	contr := Controller.NewController(serv)
-	router := Route.New_router(contr)
+	router := Router.New_router(contr)
 
 	http.ListenAndServe(":8080", router)
 

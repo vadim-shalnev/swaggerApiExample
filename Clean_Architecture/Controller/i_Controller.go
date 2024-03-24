@@ -1,14 +1,6 @@
 package Controller
 
-import (
-	"context"
-	"encoding/json"
-	"github.com/gorilla/mux"
-	service "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Service"
-	"net/http"
-	"strings"
-)
-
+/*
 type Controller struct {
 	Service service.UserService
 	Auth    Auth
@@ -115,3 +107,5 @@ func sendJSONResponse(w http.ResponseWriter, data interface{}) {
 	}
 	w.Write(respJSON)
 }
+
+*/

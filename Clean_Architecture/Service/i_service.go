@@ -1,24 +1,6 @@
 package Service
 
-import (
-	"context"
-	"encoding/json"
-	"errors"
-	"fmt"
-	"github.com/ekomobile/dadata/v2"
-	"github.com/ekomobile/dadata/v2/api/model"
-	"github.com/ekomobile/dadata/v2/client"
-	"github.com/go-chi/jwtauth/v5"
-	"github.com/golang-jwt/jwt/v5"
-	mod "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Models"
-	repository "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Repository"
-	"io"
-	"io/ioutil"
-	"log"
-	"strconv"
-	"time"
-)
-
+/*
 const (
 	ApiKey    = "22d3fa86b8743e497b32195cbc690abc06b42436"
 	SecretKey = "adf07bdd63b240ae60087efd2e72269b9c65cc91"
@@ -283,3 +265,6 @@ func (s *UserServiceImpl) RefreshToken(ctx context.Context, email, password stri
 
 	return tokenString
 }
+
+
+*/

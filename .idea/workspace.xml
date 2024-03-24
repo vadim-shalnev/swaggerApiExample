@@ -5,8 +5,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="79509455-0791-4ce8-ac74-35d8481e82e3" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Clean_Architecture/Controller/auth/auth.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Clean_Architecture/Controller/geocodController/geocodeController.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Clean_Architecture/Controller/user/user.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Clean_Architecture/Models/Noauth.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Clean_Architecture/Responder/respond.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Clean_Architecture/Service/auth/auth.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Clean_Architecture/Service/auth/auth_interface.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Clean_Architecture/Service/geocoder/Worker.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Clean_Architecture/Service/geocoder/Worker_interface.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Clean_Architecture/Service/user/user.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Clean_Architecture/Service/user/user_interface.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/aws.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/aws.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Clean_Architecture/Repository/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Clean_Architecture/Repository/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Clean_Architecture/Controller/i_Controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/Clean_Architecture/Controller/i_Controller.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Clean_Architecture/Models/NotAuth.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Clean_Architecture/Service/i_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/Clean_Architecture/Service/i_service.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,15 +72,17 @@
     "git-widget-placeholder": "main",
     "go.import.settings.migrated": "true",
     "go.sdk.automatically.set": "true",
-    "last_opened_file_path": "/home/vubuntu/goboilerplate",
+    "last_opened_file_path": "/home/vubuntu/Pet_geocoder",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "run.code.analysis.last.selected.profile": "pProject Default",
     "settings.editor.selected.configurable": "com.goide.configuration.GoLibrariesConfigurableProvider"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/Clean_Architecture/cmd" />
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
