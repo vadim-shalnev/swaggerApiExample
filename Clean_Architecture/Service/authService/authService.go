@@ -1,10 +1,11 @@
-package auth
+package authService
 
 import (
 	"context"
 	"errors"
 	"github.com/go-chi/jwtauth/v5"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Cryptografi"
 	mod "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Models"
 	repository "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Repository"
 	"log"
@@ -26,15 +27,13 @@ func (a *AuthServiceImpl) Register(ctx context.Context, regData mod.NewUserReque
 	userResponse.Role = regData.Role
 
 	// Хэшируем пароль и добавляем его в запрос к БД
-	hashPassword, err := a.crypto.HashPassword(regData.Password)
+	err = Cryptografi.HashPassword(&regData)
 	if err != nil {
 		return mod.NewUserResponse{}, errors.New("failed to hash password")
 	}
-	regData.Password = hashPassword
-
 	err = a.repo.CreateUser(ctx, regData)
 	if err != nil {
-		return mod.NewUserResponse{}, errors.New("failed to add new user to the database")
+		return mod.NewUserResponse{}, errors.New("failed to add new userController to the database")
 	}
 
 	return userResponse, nil
@@ -61,16 +60,24 @@ func (a *AuthServiceImpl) Login(ctx context.Context, loginData mod.NewUserReques
 }
 
 func (a *AuthServiceImpl) UserInfoChecker(ctx context.Context, email, password, token string) (bool, bool, bool) {
-	emailValid := a.repo.CheckEmail(ctx, email)
-	passwordValid := a.repo.CheckPassword(ctx, password)
-	_, tokenValid := a.VerifyToken(token, "exp")
-	return emailValid, passwordValid, tokenValid
+	email, password, tokenValid := a.VerifyToken(token)
+	user, _ := a.repo.GetByEmail(ctx, email)
+	if !tokenValid {
+		return false, false, false
+	}
+	if user.Email != email {
+		return false, false, false
+	}
+	if user.Password != password {
+		return false, false, false
+	}
+	return true, true, tokenValid
 }
 
 func (a *AuthServiceImpl) TokenGenerate(ctx context.Context, email, password string) (string, error) {
 	tokenAuth := jwtauth.New("HS256", []byte("secret"), nil)
 	_, tokenString, err := tokenAuth.Encode(map[string]interface{}{
-		"Username": email,
+		"Email":    email,
 		"Password": password,
 		"Exp":      time.Now().Add(time.Second * 60).Unix(),
 	})
@@ -80,40 +87,40 @@ func (a *AuthServiceImpl) TokenGenerate(ctx context.Context, email, password str
 	return tokenString, nil
 }
 
-func (a *AuthServiceImpl) VerifyToken(tokenString, searchIntoken string) (string, bool) {
+func (a *AuthServiceImpl) VerifyToken(tokenString string) (string, string, bool) {
 	// Парсим токен
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		// Возвращаем секретный ключ для проверки подписи
 		return []byte("secret"), nil
 	})
 	if err != nil {
-		return "", false
+		return "", "", false
 	}
 	if !token.Valid {
-		return "", false
+		return "", "", false
 	}
 
-	var search string
-	if searchIntoken == "exp" {
-		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-			exp := int64(claims[searchIntoken].(float64))
-			if time.Now().Unix() > exp {
-				return "", false
-			}
+	var username string
+	var password string
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		// Проверяем срок действия токена
+		exp := int64(claims["exp"].(float64))
+		if time.Now().Unix() > exp {
+			return "", "", false
 		}
-	} else {
-		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-			search = claims[searchIntoken].(string)
-		}
-	}
 
-	return search, true
+		username = claims["Username"].(string)
+		password = claims["Password"].(string)
+
+		return username, password, true
+	}
+	return "", "", false
 }
 
 func (a *AuthServiceImpl) RefreshToken(ctx context.Context, email, password string) string {
 	tokenAuth := jwtauth.New("HS256", []byte("secret"), nil)
 	_, tokenString, err := tokenAuth.Encode(map[string]interface{}{
-		"Username": email,
+		"Email":    email,
 		"Password": password,
 		"Exp":      time.Now().Add(time.Second * 60).Unix(),
 	})

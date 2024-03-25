@@ -52,7 +52,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Register a new user
+      description: Register a new userController
       parameters:
       - description: User object for registration
         in: body

@@ -1,4 +1,4 @@
-package user
+package userService
 
 import (
 	"context"
@@ -15,7 +15,7 @@ func NewAuthService(repository repository.Repository) *UserServiceImpl {
 func (u *UserServiceImpl) GetUser(ctx context.Context, id string) (mod.NewUserResponse, error) {
 	var userResponse mod.NewUserResponse
 	userID, _ := strconv.Atoi(id)
-	user, err := u.repo.GetUser(ctx, userID)
+	user, err := u.repo.GetByID(ctx, userID)
 	if err != nil {
 		return mod.NewUserResponse{}, errors.New("пользователь с таким id не найден")
 	}
@@ -25,4 +25,12 @@ func (u *UserServiceImpl) GetUser(ctx context.Context, id string) (mod.NewUserRe
 	userResponse.Token.Token = userToken
 
 	return userResponse, nil
+}
+func (u *UserServiceImpl) DelUser(ctx context.Context, id string) error {
+	userID, _ := strconv.Atoi(id)
+	err := u.repo.Delete(ctx, userID)
+	if err != nil {
+		return errors.New("пользователь с таким id не найден")
+	}
+	return nil
 }

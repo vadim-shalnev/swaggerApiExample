@@ -17,16 +17,17 @@ type TokenString struct {
 
 var token string
 
-type NewUser struct {
-	Username string `json:"user_name"`
+type NewUserRequest struct {
+	Email    string `json:"email"`
 	Password string `json:"password"`
+	Role     string `json:"role"`
 }
 
 func main() {
 	client := &http.Client{}
 	// Отправляем запрос на регистрацию пользователя и получаем токен
 	if token == "" {
-		newUser := NewUser{Username: "user123", Password: "123"}
+		newUser := NewUserRequest{Email: "user123", Password: "123"}
 		userJSON, err := json.Marshal(newUser)
 		if err != nil {
 			fmt.Println(err)

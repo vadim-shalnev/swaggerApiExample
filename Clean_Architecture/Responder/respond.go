@@ -5,16 +5,16 @@ import (
 	"net/http"
 )
 
-func sendJSONResponse(w http.ResponseWriter, data interface{}) {
+func SendJSONResponse(w http.ResponseWriter, data interface{}) {
 	respJSON, err := json.Marshal(data)
 	if err != nil {
-		handleError(w, err)
+		HandleError(w, err)
 		return
 	}
 	w.Write(respJSON)
 }
 
-func handleError(w http.ResponseWriter, err error) {
+func HandleError(w http.ResponseWriter, err error) {
 	var status int
 	switch err.Error() {
 	case "не удалось прочитать запрос", "не удалось дессериализировать JSON":

@@ -1,4 +1,4 @@
-package user
+package userService
 
 import (
 	"context"
@@ -12,4 +12,5 @@ type UserServiceImpl struct {
 
 type UserService interface {
 	GetUser(ctx context.Context, id string) (mod.NewUserResponse, error)
+	DelUser(ctx context.Context, id string) error
 }

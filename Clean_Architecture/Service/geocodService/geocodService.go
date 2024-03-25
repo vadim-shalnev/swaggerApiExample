@@ -1,17 +1,16 @@
-package geocoder
+package geocodService
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/ekomobile/dadata/v2"
 	"github.com/ekomobile/dadata/v2/api/model"
 	"github.com/ekomobile/dadata/v2/client"
+	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Cryptografi"
 	mod "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Models"
 	repository "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Repository"
-	"io"
-	"io/ioutil"
+	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Service/authService"
 	"log"
 )
 
@@ -20,25 +19,13 @@ const (
 	SecretKey = "adf07bdd63b240ae60087efd2e72269b9c65cc91"
 )
 
-func NewdadataWorkerService(repository repository.Repository) *DadataWorkerImpl {
-	return &DadataWorkerImpl{repo: repository}
+func NewgeocodeService(repository repository.Repository, aothorisation authService.AuthService) *GeocodeWorkerImpl {
+	return &GeocodeWorkerImpl{repo: repository, auth: aothorisation}
 }
 
-func (d *DadataWorkerImpl) Search(ctx context.Context, userRequest io.ReadCloser) (interface{}, error) {
-	bodyJSON, err := ioutil.ReadAll(userRequest)
-	if err != nil {
-		return mod.RequestQuery{}, errors.New("failed to read request")
-	}
-
-	var searchRequest mod.RequestQuery
+func (d *GeocodeWorkerImpl) Search(ctx context.Context, userRequest mod.RequestQuery) (interface{}, error) {
 	var responseQuery mod.RequestQuery
-
-	err = json.Unmarshal(bodyJSON, &searchRequest)
-	if err != nil {
-		return mod.RequestQuery{}, errors.New("failed to deserialize JSON")
-	}
-
-	resp, err := d.HandleWorker(ctx, searchRequest)
+	resp, err := d.HandleWorker(ctx, userRequest)
 	if err != nil {
 		return mod.RequestQuery{}, err
 	}
@@ -47,21 +34,9 @@ func (d *DadataWorkerImpl) Search(ctx context.Context, userRequest io.ReadCloser
 	return responseQuery, nil
 }
 
-func (d *DadataWorkerImpl) Address(ctx context.Context, userRequest io.ReadCloser) (interface{}, error) {
-	bodyJSON, err := ioutil.ReadAll(userRequest)
-	if err != nil {
-		return mod.RequestQuery{}, errors.New("failed to read request")
-	}
-
-	var searchRequest mod.RequestQuery
+func (d *GeocodeWorkerImpl) Address(ctx context.Context, userRequest mod.RequestQuery) (interface{}, error) {
 	var responseQuery mod.RequestQuery
-
-	err = json.Unmarshal(bodyJSON, &searchRequest)
-	if err != nil {
-		return mod.RequestQuery{}, errors.New("failed to deserialize JSON")
-	}
-
-	resp, err := d.HandleWorker(ctx, searchRequest)
+	resp, err := d.HandleWorker(ctx, userRequest)
 	if err != nil {
 		return mod.RequestQuery{}, err
 	}
@@ -70,11 +45,11 @@ func (d *DadataWorkerImpl) Address(ctx context.Context, userRequest io.ReadClose
 	return responseQuery, nil
 }
 
-func (d *DadataWorkerImpl) HandleWorker(ctx context.Context, query mod.RequestQuery) (mod.RequestAddress, error) {
+func (d *GeocodeWorkerImpl) HandleWorker(ctx context.Context, query mod.RequestQuery) (mod.RequestAddress, error) {
 	var requestQuery mod.RequestAddress
-	ok, cache, err := d.CacheChecker(ctx, query, 5)
+	ok, cache, email, err := d.CacheChecker(ctx, query, 5)
 	if err != nil {
-		log.Println(err)
+		log.Println("ошибка проверки кэша", err)
 	}
 	if ok {
 		requestQuery.Addres = cache.Addres
@@ -92,23 +67,29 @@ func (d *DadataWorkerImpl) HandleWorker(ctx context.Context, query mod.RequestQu
 		requestQuery.RequestSearch.Lng = v.GeoLon
 		requestQuery.Addres = v.Result
 	}
-	err = d.repo.Insert(ctx, query)
+	err = d.repo.Insert(ctx, email, query, requestQuery)
 	if err != nil {
 		return mod.RequestAddress{}, errors.New("Select query error")
 	}
 	return requestQuery, nil
 }
 
-func (d *DadataWorkerImpl) CacheChecker(ctx context.Context, query mod.RequestQuery, ttl int) (bool, mod.RequestAddress, error) {
+func (d *GeocodeWorkerImpl) CacheChecker(ctx context.Context, query mod.RequestQuery, ttl int) (bool, mod.RequestAddress, string, error) {
 	userToken := ctx.Value("jwt_token").(string)
-	email, _ := d.auth.VerifyToken(userToken, "email")
-	// получаем id пользователя
-	userID, err := d.repo.GetByEmail(ctx, email)
+	email, _, _ := d.auth.VerifyToken(userToken)
 	// идем в репо за последними запросами
-	searchHistory, err := d.repo.CacheChecker(ctx, userID, ttl)
+	searchHistory, err := d.repo.CacheChecker(ctx, email, ttl)
+	if err != nil {
+		return false, mod.RequestAddress{}, "", err
+	}
+	levanshtain, ok := Cryptografi.Levanshtain(searchHistory, query.Query)
+	if ok {
+		return true, levanshtain, email, nil
+	}
+	return false, mod.RequestAddress{}, "", nil
 }
 
-func (d *DadataWorkerImpl) Geocode(query mod.RequestQuery) ([]*model.Address, error) {
+func (d *GeocodeWorkerImpl) Geocode(query mod.RequestQuery) ([]*model.Address, error) {
 	creds := client.Credentials{
 		ApiKeyValue:    ApiKey,
 		SecretKeyValue: SecretKey,

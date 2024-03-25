@@ -61,7 +61,7 @@ const docTemplate = `{
         },
         "/api/register": {
             "post": {
-                "description": "Register a new user",
+                "description": "Register a new userController",
                 "consumes": [
                     "application/json"
                 ],

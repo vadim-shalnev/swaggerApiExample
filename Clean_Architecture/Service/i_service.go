@@ -55,7 +55,7 @@ func (s *UserServiceImpl) Register(ctx context.Context, userBody io.ReadCloser) 
 
 	err = s.repo.CreateUser(ctx, regData)
 	if err != nil {
-		return mod.NewUserResponse{}, errors.New("failed to add new user to the database")
+		return mod.NewUserResponse{}, errors.New("failed to add new userController to the database")
 	}
 
 	return userResponse, nil
@@ -94,13 +94,13 @@ func (s *UserServiceImpl) Login(ctx context.Context, userBody io.ReadCloser) (mo
 func (s *UserServiceImpl) GetUser(ctx context.Context, id string) (mod.NewUserResponse, error) {
 	var userResponse mod.NewUserResponse
 	userID, _ := strconv.Atoi(id)
-	user, err := s.repo.GetUser(ctx, userID)
+	userController, err := s.repo.GetUser(ctx, userID)
 	if err != nil {
 		return userResponse, err
 	}
 	userToken := ctx.Value("jwt_token").(string)
-	userResponse.Email = user.Email
-	userResponse.Role = user.Role
+	userResponse.Email = userController.Email
+	userResponse.Role = userController.Role
 	userResponse.Token.Token = userToken
 
 	return userResponse, nil
