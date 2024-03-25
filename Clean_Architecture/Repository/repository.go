@@ -32,7 +32,7 @@ func NewRepositoryImpl(db *sql.DB) *RepositoryImpl {
 }
 
 func (r *RepositoryImpl) CreateUser(ctx context.Context, user mod.NewUserRequest) error {
-	err := r.DB.QueryRow("INSERT INTO users (email, password, role, created_at, deleted_at) VALUES ($1, $2, $3, CURRENT_TIMESTAMP, NULL) ", user.Email, user.Password, user.Role)
+	_, err := r.DB.Exec("INSERT INTO users (email, password, role, created_at, deleted_at) VALUES ($1, $2, $3, CURRENT_TIMESTAMP, NULL)", user.Email, user.Password, user.Role)
 	if err != nil {
 		log.Println("Error creating user:", err)
 		return errors.New("failed to create user")

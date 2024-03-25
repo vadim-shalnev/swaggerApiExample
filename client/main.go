@@ -28,7 +28,7 @@ type RequestQuery struct {
 func main() {
 	// регистрируемся в сервисе и проверяем 'endpoints user
 	client := &http.Client{}
-	newUser := NewUserRequest{Email: "user1234", Password: "123", Role: "user"}
+	newUser := NewUserRequest{Email: "user9", Password: "123", Role: "user"}
 	userJSON, err := json.Marshal(newUser)
 	if err != nil {
 		fmt.Println(err)
@@ -47,13 +47,14 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	var datainfo NewUserResponse
-	err = json.Unmarshal(bodyJSON, &datainfo)
+
+	var reginfo NewUserResponse
+	err = json.Unmarshal(bodyJSON, &reginfo)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println(datainfo)
+	fmt.Println(reginfo)
 
 	req, err := http.NewRequest("POST", "http://localhost:8080/api/login", bytes.NewReader(userJSON))
 	if err != nil {
@@ -61,8 +62,9 @@ func main() {
 		return
 	}
 
-	token := datainfo.Token.Token
+	token := reginfo.Token.Token
 	req.Header.Set("Authorization", "Bearer "+token)
+
 	resp, err = client.Do(req)
 	if err != nil {
 		fmt.Println(err)
@@ -72,6 +74,7 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
+	fmt.Println("Response body:", string(bodyByte))
 
 	var loginInfo NewUserResponse
 	err = json.Unmarshal(bodyByte, &loginInfo)
@@ -79,7 +82,7 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println(bodyByte)
+	fmt.Println(loginInfo)
 
 	req, err = http.NewRequest("GET", "http://localhost:8080/user/get/{1}", nil)
 	if err != nil {

@@ -9,6 +9,7 @@ import (
 	mod "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Models"
 	repository "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Repository"
 	"log"
+	"strings"
 	"time"
 )
 
@@ -60,17 +61,22 @@ func (a *AuthServiceImpl) Login(ctx context.Context, loginData mod.NewUserReques
 }
 
 func (a *AuthServiceImpl) UserInfoChecker(ctx context.Context, email, password, token string) (bool, bool, bool) {
-	email, password, tokenValid := a.VerifyToken(token)
+	email, _, tokenValid := a.VerifyToken(token)
 	user, _ := a.repo.GetByEmail(ctx, email)
 	if !tokenValid {
 		return false, false, false
 	}
-	if user.Email != email {
+	if strings.TrimSpace(user.Email) != strings.TrimSpace(email) {
+		log.Println("!"+user.Email+"!", "!"+email+"!", "false")
 		return false, false, false
+	} else {
+		log.Println("!"+user.Email+"!", "!"+email+"!", "true")
 	}
-	if user.Password != password {
+	if err := Cryptografi.CheckPassword(password, user.Password); err != nil {
 		return false, false, false
+		log.Println("check pass is false")
 	}
+	log.Println("check is ok")
 	return true, true, tokenValid
 }
 
@@ -104,12 +110,12 @@ func (a *AuthServiceImpl) VerifyToken(tokenString string) (string, string, bool)
 	var password string
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		// Проверяем срок действия токена
-		exp := int64(claims["exp"].(float64))
+		exp := int64(claims["Exp"].(float64))
 		if time.Now().Unix() > exp {
 			return "", "", false
 		}
 
-		username = claims["Username"].(string)
+		username = claims["Email"].(string)
 		password = claims["Password"].(string)
 
 		return username, password, true

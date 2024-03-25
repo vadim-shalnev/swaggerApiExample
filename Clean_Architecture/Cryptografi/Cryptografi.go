@@ -16,6 +16,13 @@ func HashPassword(user *Models.NewUserRequest) error {
 	user.Password = string(hashedPassword)
 	return nil
 }
+func CheckPassword(hashedPassword string, password string) error {
+	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
+	if err != nil {
+		return err
+	}
+	return nil
+}
 
 // Метод для сравнения запроса с кэшом
 func Levanshtain(searchHistory []Models.SearchHistory, qwery string) (Models.RequestAddress, bool) {
