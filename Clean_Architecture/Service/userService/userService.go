@@ -26,6 +26,7 @@ func (u *UserServiceImpl) GetUser(ctx context.Context, id string) (mod.NewUserRe
 
 	return userResponse, nil
 }
+
 func (u *UserServiceImpl) DelUser(ctx context.Context, id string) error {
 	userID, _ := strconv.Atoi(id)
 	err := u.repo.Delete(ctx, userID)

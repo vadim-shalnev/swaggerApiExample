@@ -16,7 +16,7 @@ import (
 )
 
 func main() {
-	db, err := sql.Open("postgres", "host=localhost port=5432 user=postgres password=qwerty dbname=mydatabase sslmode=disable")
+	db, err := sql.Open("postgres", "host=localhost port=5432 user=vubuntu password=qwerty dbname=vubuntu sslmode=disable")
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)
 	}

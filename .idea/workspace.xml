@@ -5,32 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="79509455-0791-4ce8-ac74-35d8481e82e3" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Clean_Architecture/Controller/authController/authController.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Clean_Architecture/Repository/repository.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Clean_Architecture/cmd/dbinit.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Clean_Architecture/Controller/auth/auth.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Clean_Architecture/Controller/geocodController/geocodeController.go" beforeDir="false" afterPath="$PROJECT_DIR$/Clean_Architecture/Controller/geocodController/geocodeController.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Clean_Architecture/Controller/user/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/Clean_Architecture/Controller/userController/userController.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Clean_Architecture/Cryptografi/Cryptografi.go" beforeDir="false" afterPath="$PROJECT_DIR$/Clean_Architecture/Cryptografi/Cryptografi.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Clean_Architecture/Models/Auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/Clean_Architecture/Models/Auth.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Clean_Architecture/Models/Noauth.go" beforeDir="false" afterPath="$PROJECT_DIR$/Clean_Architecture/Models/Noauth.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Clean_Architecture/Repository/i_repository.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Clean_Architecture/Responder/respond.go" beforeDir="false" afterPath="$PROJECT_DIR$/Clean_Architecture/Responder/respond.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Clean_Architecture/Router/Route.go" beforeDir="false" afterPath="$PROJECT_DIR$/Clean_Architecture/Router/Route.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Clean_Architecture/Service/auth/auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/Clean_Architecture/Service/authService/authService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Clean_Architecture/Service/auth/auth_interface.go" beforeDir="false" afterPath="$PROJECT_DIR$/Clean_Architecture/Service/authService/auth_interface.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Clean_Architecture/Service/geocoder/geocoder.go" beforeDir="false" afterPath="$PROJECT_DIR$/Clean_Architecture/Service/geocodService/geocodService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Clean_Architecture/Service/geocoder/geocoder_interface.go" beforeDir="false" afterPath="$PROJECT_DIR$/Clean_Architecture/Service/geocodService/geocoder_interface.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Clean_Architecture/Service/i_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/Clean_Architecture/Service/i_service.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Clean_Architecture/Service/user/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/Clean_Architecture/Service/userService/userService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Clean_Architecture/Service/user/user_interface.go" beforeDir="false" afterPath="$PROJECT_DIR$/Clean_Architecture/Service/userService/user_interface.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Clean_Architecture/Service/userService/userService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Clean_Architecture/Service/userService/userService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Clean_Architecture/cmd/dbinit.go" beforeDir="false" afterPath="$PROJECT_DIR$/Clean_Architecture/cmd/dbinit.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Clean_Architecture/cmd/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Clean_Architecture/cmd/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/client/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/docs.go" beforeDir="false" afterPath="$PROJECT_DIR$/docs/docs.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/swagger.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/docs/swagger.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

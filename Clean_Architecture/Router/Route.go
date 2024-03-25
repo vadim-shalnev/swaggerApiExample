@@ -12,12 +12,12 @@ import (
 func New_router(controllerAuth *authController.AuthControllerImpl, controllerUser *userController.UserControllerImpl, controllerGeocode *geocodController.GeocodControllerImpl) http.Handler {
 	r := chi.NewRouter()
 	controller := controllerAuth
-	r.Post("/api/login", controller.Register)
-	r.Post("/api/register", controller.Login)
+	r.Post("/api/login", controller.Login)
+	r.Post("/api/register", controller.Register)
 	r.Route("/api/user", func(r chi.Router) {
 		r.Use(controller.AuthMiddleware)
 		r.Get("/get/{id}", controllerUser.GetUser)
-		r.Get("/del/{id}", controllerUser.DelUser)
+		r.Delete("/del/{id}", controllerUser.DelUser)
 	})
 	r.Route("/api/address", func(r chi.Router) {
 		r.Use(controller.AuthMiddleware)

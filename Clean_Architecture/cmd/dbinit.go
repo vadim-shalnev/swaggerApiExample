@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS users (
         email VARCHAR(255) UNIQUE NOT NULL,
         password VARCHAR(255) NOT NULL,
         "role" VARCHAR(255) NOT NULL,
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
         deleted_at TIMESTAMP WITH TIME ZONE DEFAULT NULL
     );
     `
@@ -40,18 +40,32 @@ CREATE TABLE IF NOT EXISTS response_history (
     FOREIGN KEY (qwery_key) REFERENCES qwery_history(id)
 );
 `
-	_, err := db.Exec(createUsersTable)
+	tx, err := db.Begin()
 	if err != nil {
+		log.Fatal("Failed to start transaction:", err)
+	}
+
+	_, err = tx.Exec(createUsersTable)
+	if err != nil {
+		tx.Rollback()
 		log.Fatal("Failed to create users table:", err)
 	}
 
-	_, err = db.Exec(createTableQuery)
+	_, err = tx.Exec(createTableQuery)
 	if err != nil {
+		tx.Rollback()
 		log.Fatal("Failed to create geocodes table:", err)
 	}
-	_, err = db.Exec(createTableResponse)
+
+	_, err = tx.Exec(createTableResponse)
 	if err != nil {
+		tx.Rollback()
 		log.Fatal("Failed to create response_history table:", err)
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		log.Fatal("Failed to commit transaction:", err)
 	}
 
 	log.Println("Tables created successfully")
