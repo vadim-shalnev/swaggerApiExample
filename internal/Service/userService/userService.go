@@ -3,8 +3,8 @@ package userService
 import (
 	"context"
 	"errors"
-	mod "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Models"
-	repository "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/internal/Repository"
+	mod "github.com/vadim-shalnev/swaggerApiExample/Models"
+	repository "github.com/vadim-shalnev/swaggerApiExample/internal/Repository"
 	"strconv"
 )
 

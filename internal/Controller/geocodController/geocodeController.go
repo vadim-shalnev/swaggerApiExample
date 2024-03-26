@@ -3,9 +3,9 @@ package geocodController
 import (
 	"context"
 	"encoding/json"
-	mod "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Models"
-	responder "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/internal/Responder"
-	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/internal/Service/geocodService"
+	mod "github.com/vadim-shalnev/swaggerApiExample/Models"
+	responder "github.com/vadim-shalnev/swaggerApiExample/internal/Responder"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/Service/geocodService"
 	"io/ioutil"
 	"log"
 	"net/http"

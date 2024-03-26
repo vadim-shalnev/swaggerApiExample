@@ -3,9 +3,9 @@ package geocodService
 import (
 	"context"
 	"github.com/ekomobile/dadata/v2/api/model"
-	mod "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Models"
-	repository "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/internal/Repository"
-	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/internal/Service/authService"
+	mod "github.com/vadim-shalnev/swaggerApiExample/Models"
+	repository "github.com/vadim-shalnev/swaggerApiExample/internal/Repository"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/Service/authService"
 )
 
 type GeocodeWorkerImpl struct {

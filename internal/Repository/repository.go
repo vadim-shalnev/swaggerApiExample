@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	mod "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Models"
+	"github.com/vadim-shalnev/swaggerApiExample/Models"
 	"log"
 )
 
@@ -13,12 +13,12 @@ type RepositoryImpl struct {
 }
 
 type Repository interface {
-	CreateUser(ctx context.Context, user mod.NewUserRequest) error
-	GetByEmail(ctx context.Context, email string) (mod.User, error)
-	GetByID(ctx context.Context, id int) (mod.User, error)
-	Insert(ctx context.Context, email string, query mod.RequestQuery, requestQuery mod.RequestAddress) error
+	CreateUser(ctx context.Context, user Models.NewUserRequest) error
+	GetByEmail(ctx context.Context, email string) (Models.User, error)
+	GetByID(ctx context.Context, id int) (Models.User, error)
+	Insert(ctx context.Context, email string, query Models.RequestQuery, requestQuery Models.RequestAddress) error
 	Delete(ctx context.Context, userID int) error
-	CacheChecker(ctx context.Context, email string, historyCount int) ([]mod.SearchHistory, error)
+	CacheChecker(ctx context.Context, email string, historyCount int) ([]Models.SearchHistory, error)
 	//Select(ctx context.Context, query mod.UserRequest) error
 	//Update(ctx context.Context, query mod.RequestUser) error
 	//CheckEmail(ctx context.Context, email string) bool
@@ -31,7 +31,7 @@ func NewRepositoryImpl(db *sql.DB) *RepositoryImpl {
 	return &RepositoryImpl{DB: db}
 }
 
-func (r *RepositoryImpl) CreateUser(ctx context.Context, user mod.NewUserRequest) error {
+func (r *RepositoryImpl) CreateUser(ctx context.Context, user Models.NewUserRequest) error {
 	_, err := r.DB.Exec("INSERT INTO users (email, password, role, created_at, deleted_at) VALUES ($1, $2, $3, CURRENT_TIMESTAMP, NULL)", user.Email, user.Password, user.Role)
 	if err != nil {
 		log.Println("Error creating user:", err)
@@ -39,43 +39,43 @@ func (r *RepositoryImpl) CreateUser(ctx context.Context, user mod.NewUserRequest
 	}
 	return nil
 }
-func (r *RepositoryImpl) GetByEmail(ctx context.Context, email string) (mod.User, error) {
-	var user mod.User
+func (r *RepositoryImpl) GetByEmail(ctx context.Context, email string) (Models.User, error) {
+	var user Models.User
 
 	err := r.DB.QueryRowContext(ctx, "SELECT id, email, password, role, created_at, deleted_at FROM users WHERE email = $1", email).Scan(&user.ID, &user.Email, &user.Password, &user.Role, &user.CreatedAt, &user.DeletedAt)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			log.Println("User not found", email)
-			return mod.User{}, err
+			return Models.User{}, err
 		}
 		log.Println("Error getting user by email:", err)
-		return mod.User{}, err
+		return Models.User{}, err
 	}
 	if user.DeletedAt != nil {
 		log.Println("User deleted", email)
-		return mod.User{}, err
+		return Models.User{}, err
 	}
 
 	return user, nil
 }
 
-func (r *RepositoryImpl) GetByID(ctx context.Context, id int) (mod.User, error) {
-	var user mod.User
+func (r *RepositoryImpl) GetByID(ctx context.Context, id int) (Models.User, error) {
+	var user Models.User
 
 	err := r.DB.QueryRow("SELECT id, email, password, role, created_at, deleted_at FROM users WHERE id = $1", id).Scan(&user.ID, &user.Email, &user.Password, &user.Role, &user.CreatedAt, &user.DeletedAt)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return mod.User{}, errors.New("user not found")
+			return Models.User{}, errors.New("user not found")
 		}
 		log.Println("Error getting user by email:", err)
-		return mod.User{}, err
+		return Models.User{}, err
 	}
 	if user.DeletedAt != nil {
-		return mod.User{}, errors.New("user not found")
+		return Models.User{}, errors.New("user not found")
 	}
 	return user, nil
 }
-func (r *RepositoryImpl) Insert(ctx context.Context, email string, query mod.RequestQuery, requestQuery mod.RequestAddress) error {
+func (r *RepositoryImpl) Insert(ctx context.Context, email string, query Models.RequestQuery, requestQuery Models.RequestAddress) error {
 	// Начало транзакции
 	tx, err := r.DB.BeginTx(ctx, nil)
 	if err != nil {
@@ -119,18 +119,18 @@ func (r *RepositoryImpl) Delete(ctx context.Context, userID int) error {
 	return nil
 }
 
-func (r *RepositoryImpl) CacheChecker(ctx context.Context, email string, historyCount int) ([]mod.SearchHistory, error) {
+func (r *RepositoryImpl) CacheChecker(ctx context.Context, email string, historyCount int) ([]Models.SearchHistory, error) {
 	log.Println("cachechecker repo is start", email, historyCount)
 	// ходим в базу поисковых запросов и базу ответов дадата
 	tx, err := r.DB.BeginTx(ctx, nil)
 	if err != nil {
-		return []mod.SearchHistory{}, err
+		return []Models.SearchHistory{}, err
 	}
 	defer tx.Rollback()
 	// получаем id пользователя из базы данных
 	user, err := r.GetByEmail(ctx, email)
 	if err != nil {
-		return []mod.SearchHistory{}, err
+		return []Models.SearchHistory{}, err
 	}
 	userID := user.ID
 	// получаем последние n поисковых запросов из базы данных
@@ -145,18 +145,18 @@ func (r *RepositoryImpl) CacheChecker(ctx context.Context, email string, history
 	rows, err := tx.QueryContext(ctx, query, userID, historyCount)
 	if err != nil {
 		log.Println("Error querying search history:", err)
-		return []mod.SearchHistory{}, err
+		return []Models.SearchHistory{}, err
 	}
 	defer rows.Close()
 
 	// Сбор результатов
-	var searchHistories []mod.SearchHistory
+	var searchHistories []Models.SearchHistory
 	for rows.Next() {
-		var sh mod.SearchHistory
+		var sh Models.SearchHistory
 		err := rows.Scan(&sh.ID, &sh.Query, &sh.Address, &sh.Lng, &sh.Lat)
 		if err != nil {
 			log.Println("Error scanning search history:", err)
-			return []mod.SearchHistory{}, err
+			return []Models.SearchHistory{}, err
 		}
 		searchHistories = append(searchHistories, sh)
 	}
@@ -165,7 +165,7 @@ func (r *RepositoryImpl) CacheChecker(ctx context.Context, email string, history
 	err = tx.Commit()
 	if err != nil {
 		log.Println("Error committing transaction:", err)
-		return []mod.SearchHistory{}, err
+		return []Models.SearchHistory{}, err
 	}
 
 	return searchHistories, nil

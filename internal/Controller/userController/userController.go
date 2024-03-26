@@ -3,8 +3,8 @@ package userController
 import (
 	"context"
 	"github.com/go-chi/chi/v5"
-	responder "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/internal/Responder"
-	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/internal/Service/userService"
+	responder "github.com/vadim-shalnev/swaggerApiExample/internal/Responder"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/Service/userService"
 	"log"
 	"net/http"
 	"strings"

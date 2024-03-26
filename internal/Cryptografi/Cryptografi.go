@@ -2,17 +2,17 @@ package Cryptografi
 
 import (
 	"github.com/agnivade/levenshtein"
-	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Models"
+	Models2 "github.com/vadim-shalnev/swaggerApiExample/Models"
 	"golang.org/x/crypto/bcrypt"
 	"log"
 )
 
 // Метод для шифрования пароля
-func HashPassword(user Models.NewUserRequest) (Models.NewUserRequest, error) {
+func HashPassword(user Models2.NewUserRequest) (Models2.NewUserRequest, error) {
 	password := user.Password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		return Models.NewUserRequest{}, err
+		return Models2.NewUserRequest{}, err
 	}
 	user.Password = string(hashedPassword)
 	return user, nil
@@ -27,8 +27,8 @@ func CheckPassword(hashedPassword string, password string) error {
 }
 
 // Метод для сравнения запроса с кэшом
-func Levanshtain(searchHistory []Models.SearchHistory, qwery string) (Models.RequestAddress, bool) {
-	var result Models.RequestAddress
+func Levanshtain(searchHistory []Models2.SearchHistory, qwery string) (Models2.RequestAddress, bool) {
+	var result Models2.RequestAddress
 	var found bool
 	threshold := 0.7
 

@@ -7,10 +7,10 @@ import (
 	"github.com/ekomobile/dadata/v2"
 	"github.com/ekomobile/dadata/v2/api/model"
 	"github.com/ekomobile/dadata/v2/client"
-	mod "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Models"
-	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/internal/Cryptografi"
-	repository "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/internal/Repository"
-	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/internal/Service/authService"
+	mod "github.com/vadim-shalnev/swaggerApiExample/Models"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/Cryptografi"
+	repository "github.com/vadim-shalnev/swaggerApiExample/internal/Repository"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/Service/authService"
 	"log"
 )
 
