@@ -19,11 +19,11 @@ const (
 	SecretKey = "adf07bdd63b240ae60087efd2e72269b9c65cc91"
 )
 
-func NewgeocodeService(repository repository.Repository, aothorisation authService.AuthService) *GeocodeWorkerImpl {
-	return &GeocodeWorkerImpl{repo: repository, auth: aothorisation}
+func NewgeocodeService(repository repository.Repository, aothorisation authService.AuthService) *Geocodeworker {
+	return &Geocodeworker{repo: repository, auth: aothorisation}
 }
 
-func (d *GeocodeWorkerImpl) Search(ctx context.Context, userRequest mod.RequestQuery) (mod.RequestQuery, error) {
+func (d *Geocodeworker) Search(ctx context.Context, userRequest mod.RequestQuery) (mod.RequestQuery, error) {
 	var responseQuery mod.RequestQuery
 	resp, err := d.HandleWorker(ctx, userRequest)
 	if err != nil {
@@ -34,7 +34,7 @@ func (d *GeocodeWorkerImpl) Search(ctx context.Context, userRequest mod.RequestQ
 	return responseQuery, nil
 }
 
-func (d *GeocodeWorkerImpl) Address(ctx context.Context, userRequest mod.RequestQuery) (mod.RequestQuery, error) {
+func (d *Geocodeworker) Address(ctx context.Context, userRequest mod.RequestQuery) (mod.RequestQuery, error) {
 	var responseQuery mod.RequestQuery
 	resp, err := d.HandleWorker(ctx, userRequest)
 	if err != nil {
@@ -45,14 +45,14 @@ func (d *GeocodeWorkerImpl) Address(ctx context.Context, userRequest mod.Request
 	return responseQuery, nil
 }
 
-func (d *GeocodeWorkerImpl) HandleWorker(ctx context.Context, query mod.RequestQuery) (mod.RequestAddress, error) {
+func (d *Geocodeworker) HandleWorker(ctx context.Context, query mod.RequestQuery) (mod.RequestAddress, error) {
 	var requestQuery mod.RequestAddress
 	ok, cache, email, err := d.CacheChecker(ctx, query, 5)
-	log.Println("handleemail", email, ok)
 	if err != nil {
 		log.Println("ошибка проверки кэша", err)
 	}
 	if ok {
+		log.Println("отдаем из кэша")
 		requestQuery.Addres = cache.Addres
 		requestQuery.RequestSearch.Lat = cache.RequestSearch.Lat
 		requestQuery.RequestSearch.Lng = cache.RequestSearch.Lng
@@ -76,7 +76,7 @@ func (d *GeocodeWorkerImpl) HandleWorker(ctx context.Context, query mod.RequestQ
 	return requestQuery, nil
 }
 
-func (d *GeocodeWorkerImpl) CacheChecker(ctx context.Context, query mod.RequestQuery, ttl int) (bool, mod.RequestAddress, string, error) {
+func (d *Geocodeworker) CacheChecker(ctx context.Context, query mod.RequestQuery, ttl int) (bool, mod.RequestAddress, string, error) {
 	userToken := ctx.Value("jwt_token").(string)
 	email, _, _ := d.auth.VerifyToken(userToken)
 	// идем в репо за последними запросами
@@ -93,7 +93,7 @@ func (d *GeocodeWorkerImpl) CacheChecker(ctx context.Context, query mod.RequestQ
 	return false, mod.RequestAddress{}, email, nil
 }
 
-func (d *GeocodeWorkerImpl) Geocode(query mod.RequestQuery) ([]*model.Address, error) {
+func (d *Geocodeworker) Geocode(query mod.RequestQuery) ([]*model.Address, error) {
 	creds := client.Credentials{
 		ApiKeyValue:    ApiKey,
 		SecretKeyValue: SecretKey,

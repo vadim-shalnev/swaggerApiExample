@@ -5,15 +5,29 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="79509455-0791-4ce8-ac74-35d8481e82e3" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/swag.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Clean_Architecture/Controller/authController/authController.go" beforeDir="false" afterPath="$PROJECT_DIR$/Clean_Architecture/Controller/authController/authController.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Clean_Architecture/Controller/userController/userController.go" beforeDir="false" afterPath="$PROJECT_DIR$/Clean_Architecture/Controller/userController/userController.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Clean_Architecture/Cryptografi/Cryptografi.go" beforeDir="false" afterPath="$PROJECT_DIR$/Clean_Architecture/Cryptografi/Cryptografi.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Clean_Architecture/Repository/repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/Clean_Architecture/Repository/repository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Clean_Architecture/Service/authService/authService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Clean_Architecture/Service/authService/authService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Clean_Architecture/Service/geocodService/geocodService.go" beforeDir="false" afterPath="$PROJECT_DIR$/Clean_Architecture/Service/geocodService/geocodService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Clean_Architecture/Service/geocodService/geocoder_interface.go" beforeDir="false" afterPath="$PROJECT_DIR$/Clean_Architecture/Service/geocodService/geocoder_interface.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/client/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/docs.go" beforeDir="false" afterPath="$PROJECT_DIR$/docs/docs.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/swagger.json" beforeDir="false" afterPath="$PROJECT_DIR$/docs/swagger.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/swagger.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/docs/swagger.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Controller/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Controller/authController/authController.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/authController/authController.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Controller/geocodController/geocodeController.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/geocodController/geocodeController.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Controller/i_Controller.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Controller/userController/userController.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Controller/userController/userController.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Repository/Dockerfile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Repository/repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Repository/repository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Router/Route.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Router/Route.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/Dockerfile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/authService/authService.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/authService/authService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/authService/auth_interface.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/authService/auth_interface.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/geocodService/geocodService.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/geocodService/geocodService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/geocodService/geocoder_interface.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/geocodService/geocoder_interface.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/i_service.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/userService/userService.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/userService/userService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Service/userService/user_interface.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Service/userService/user_interface.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,6 +65,7 @@
     &quot;Go Build.go build aothorization.executor&quot;: &quot;Run&quot;,
     &quot;Go Build.go build github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/cmd.executor&quot;: &quot;Run&quot;,
     &quot;Go Build.go build github.com/vadim-shalnev/swaggerApiExample/client.executor&quot;: &quot;Run&quot;,
+    &quot;Go Build.go build github.com/vadim-shalnev/swaggerApiExample/cmd.executor&quot;: &quot;Run&quot;,
     &quot;Go Build.go build github/vadim-shalnev.executor&quot;: &quot;Run&quot;,
     &quot;Go Build.go build github/vadim-shalnev/Clean_Architecture/Authorisation.executor&quot;: &quot;Run&quot;,
     &quot;Go Build.go build github/vadim-shalnev/Clean_Architecture/Handle.executor&quot;: &quot;Run&quot;,
@@ -77,11 +92,12 @@
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/Clean_Architecture/cmd" />
       <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/Clean_Architecture/internal" />
+      <recent name="$PROJECT_DIR$/Clean_Architecture/cmd" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Build.go build github.com/vadim-shalnev/swaggerApiExample/client">
+  <component name="RunManager" selected="Go Build.go build github.com/vadim-shalnev/swaggerApiExample/cmd">
     <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
       <module name="swaggerApiExample" />
       <working_directory value="$PROJECT_DIR$" />
@@ -118,6 +134,15 @@
       <filePath value="$PROJECT_DIR$/client/main.go" />
       <method v="2" />
     </configuration>
+    <configuration name="go build github.com/vadim-shalnev/swaggerApiExample/cmd" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="swaggerApiExample" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="github.com/vadim-shalnev/swaggerApiExample/cmd" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/cmd/main.go" />
+      <method v="2" />
+    </configuration>
     <configuration name="go build github/vadim-shalnev/client" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="swaggerApiExample" />
       <working_directory value="$PROJECT_DIR$" />
@@ -125,15 +150,6 @@
       <package value="github/vadim-shalnev/client" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$/client/main.go" />
-      <method v="2" />
-    </configuration>
-    <configuration name="go build handle" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="swaggerApiExample" />
-      <working_directory value="$PROJECT_DIR$/Clean_Architecture/Handle" />
-      <kind value="PACKAGE" />
-      <package value="handle" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/Clean_Architecture/Handle/main.go" />
       <method v="2" />
     </configuration>
     <configuration default="true" type="GoTestRunConfiguration" factoryName="Go Test">
@@ -150,23 +166,23 @@
       <item itemvalue="Go Build.go build aothorization" />
       <item itemvalue="Go Build.go build github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/cmd" />
       <item itemvalue="Go Build.go build github.com/vadim-shalnev/swaggerApiExample/client" />
+      <item itemvalue="Go Build.go build github.com/vadim-shalnev/swaggerApiExample/cmd" />
       <item itemvalue="Go Build.go build github/vadim-shalnev/client" />
-      <item itemvalue="Go Build.go build handle" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Build.go build github.com/vadim-shalnev/swaggerApiExample/cmd" />
         <item itemvalue="Go Build.go build github.com/vadim-shalnev/swaggerApiExample/client" />
         <item itemvalue="Go Build.go build github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/cmd" />
         <item itemvalue="Go Build.go build aothorization" />
         <item itemvalue="Go Build.go build github/vadim-shalnev/client" />
-        <item itemvalue="Go Build.go build handle" />
       </list>
     </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-gosdk-2946fb9b3188-155fe4b6e3a0-org.jetbrains.plugins.go.sharedIndexes.bundled-GO-233.14808.20" />
+        <option value="bundled-gosdk-2946fb9b3188-155fe4b6e3a0-org.jetbrains.plugins.go.sharedIndexes.bundled-GO-233.15026.17" />
       </set>
     </attachedChunks>
   </component>

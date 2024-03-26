@@ -13,11 +13,11 @@ import (
 	"time"
 )
 
-func NewAuthService(repository repository.Repository) *AuthServiceImpl {
-	return &AuthServiceImpl{repo: repository}
+func NewAuthService(repository repository.Repository) *Authservice {
+	return &Authservice{repo: repository}
 }
 
-func (a *AuthServiceImpl) Register(ctx context.Context, regData mod.NewUserRequest) (mod.NewUserResponse, error) {
+func (a *Authservice) Register(ctx context.Context, regData mod.NewUserRequest) (mod.NewUserResponse, error) {
 	tokenAuth, err := a.TokenGenerate(ctx, regData.Email, regData.Password)
 	if err != nil {
 		return mod.NewUserResponse{}, err
@@ -40,7 +40,7 @@ func (a *AuthServiceImpl) Register(ctx context.Context, regData mod.NewUserReque
 	return userResponse, nil
 }
 
-func (a *AuthServiceImpl) Login(ctx context.Context, loginData mod.NewUserRequest) (mod.NewUserResponse, error) {
+func (a *Authservice) Login(ctx context.Context, loginData mod.NewUserRequest) (mod.NewUserResponse, error) {
 	var userResponse mod.NewUserResponse
 	userResponse.Email = loginData.Email
 	userResponse.Role = loginData.Role
@@ -62,7 +62,7 @@ func (a *AuthServiceImpl) Login(ctx context.Context, loginData mod.NewUserReques
 	return userResponse, nil
 }
 
-func (a *AuthServiceImpl) UserInfoChecker(ctx context.Context, email, password, token string) (bool, bool, bool) {
+func (a *Authservice) UserInfoChecker(ctx context.Context, email, password, token string) (bool, bool, bool) {
 	email, _, tokenValid := a.VerifyToken(token)
 	log.Println("UserInfoChecker email", email)
 	user, _ := a.repo.GetByEmail(ctx, email)
@@ -86,7 +86,7 @@ func (a *AuthServiceImpl) UserInfoChecker(ctx context.Context, email, password, 
 	return true, true, tokenValid
 }
 
-func (a *AuthServiceImpl) TokenGenerate(ctx context.Context, email, password string) (string, error) {
+func (a *Authservice) TokenGenerate(ctx context.Context, email, password string) (string, error) {
 	tokenAuth := jwtauth.New("HS256", []byte("secret"), nil)
 	_, tokenString, err := tokenAuth.Encode(map[string]interface{}{
 		"Email":    email,
@@ -99,7 +99,7 @@ func (a *AuthServiceImpl) TokenGenerate(ctx context.Context, email, password str
 	return tokenString, nil
 }
 
-func (a *AuthServiceImpl) VerifyToken(tokenString string) (string, string, bool) {
+func (a *Authservice) VerifyToken(tokenString string) (string, string, bool) {
 	// Парсим токен
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		// Возвращаем секретный ключ для проверки подписи
@@ -129,7 +129,7 @@ func (a *AuthServiceImpl) VerifyToken(tokenString string) (string, string, bool)
 	return "", "", false
 }
 
-func (a *AuthServiceImpl) RefreshToken(ctx context.Context, email, password string) string {
+func (a *Authservice) RefreshToken(ctx context.Context, email, password string) string {
 	tokenAuth := jwtauth.New("HS256", []byte("secret"), nil)
 	_, tokenString, err := tokenAuth.Encode(map[string]interface{}{
 		"Email":    email,

@@ -8,11 +8,11 @@ import (
 	"strconv"
 )
 
-func NewAuthService(repository repository.Repository) *UserServiceImpl {
-	return &UserServiceImpl{repo: repository}
+func NewAuthService(repository repository.Repository) *Userservice {
+	return &Userservice{repo: repository}
 }
 
-func (u *UserServiceImpl) GetUser(ctx context.Context, id string) (mod.NewUserResponse, error) {
+func (u *Userservice) GetUser(ctx context.Context, id string) (mod.NewUserResponse, error) {
 	var userResponse mod.NewUserResponse
 	userID, _ := strconv.Atoi(id)
 	user, err := u.repo.GetByID(ctx, userID)
@@ -27,11 +27,20 @@ func (u *UserServiceImpl) GetUser(ctx context.Context, id string) (mod.NewUserRe
 	return userResponse, nil
 }
 
-func (u *UserServiceImpl) DelUser(ctx context.Context, id string) error {
+func (u *Userservice) DelUser(ctx context.Context, id string) error {
 	userID, _ := strconv.Atoi(id)
 	err := u.repo.Delete(ctx, userID)
 	if err != nil {
 		return errors.New("пользователь с таким id не найден")
 	}
 	return nil
+}
+
+func (u *Userservice) ListUsers(ctx context.Context) ([]mod.User, error) {
+	// добавить логику для роли админа других ролей
+	users, err := u.repo.List(ctx)
+	if err != nil {
+		return nil, errors.New("пользователи не найдены")
+	}
+	return users, nil
 }

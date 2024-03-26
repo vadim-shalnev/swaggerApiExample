@@ -13,9 +13,10 @@ import (
 	"github.com/vadim-shalnev/swaggerApiExample/internal/Service/userService"
 	"log"
 	"net/http"
+	"time"
 )
 
-// @title Geocode Api Server
+// @title Swagger Example API
 // @version 1.0
 // @description This is a geocode api server.
 
@@ -24,9 +25,9 @@ import (
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
 // @name Authorization
-
 func main() {
-	db, err := sql.Open("postgres", "host=localhost port=5432 user=vubuntu password=qwerty dbname=vubuntu sslmode=disable")
+	time.Sleep(time.Second * 5)
+	db, err := sql.Open("postgres", "host=db port=5432 user=postgresuser password=userpassword dbname=postgres sslmode=disable")
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)
 	}

@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-type AuthControllerImpl struct {
+type Authcontroller struct {
 	Auth authService.AuthService
 }
 
@@ -20,20 +20,19 @@ type AuthController interface {
 	Login(w http.ResponseWriter, r *http.Request)
 }
 
-func NewAuthController(auth authService.AuthService) *AuthControllerImpl {
-	return &AuthControllerImpl{Auth: auth}
+func NewAuthController(auth authService.AuthService) *Authcontroller {
+	return &Authcontroller{Auth: auth}
 }
 
-// @Summary Регистрация нового пользователя
+// Register @Summary Регистрация нового пользователя
 // @Description Регистрация нового пользователя с указанным email и паролем
-// @Tags users
+// @Tags reg
 // @Accept json
 // @Produce json
 // @Param   user body mod.NewUserRequest true "Данные пользователя"
 // @Success 200 {object} mod.NewUserResponse "Успешная регистрация"
 // @Router /api/register [post]
-
-func (c *AuthControllerImpl) Register(w http.ResponseWriter, r *http.Request) {
+func (c *Authcontroller) Register(w http.ResponseWriter, r *http.Request) {
 	var regData mod.NewUserRequest
 	bodyJSON, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -54,16 +53,15 @@ func (c *AuthControllerImpl) Register(w http.ResponseWriter, r *http.Request) {
 	responder.SendJSONResponse(w, UserInfo)
 }
 
-// @Summary Вход в систему
+// Login @Summary Вход в систему
 // @Description Вход в систему с указанным email и паролем
-// @Tags users
+// @Tags reg
 // @Accept json
 // @Produce json
 // @Param   user body mod.NewUserRequest true "Данные пользователя"
 // @Success 200 {object} mod.NewUserResponse "Успешный вход в систему"
 // @Router /api/login [post]
-
-func (c *AuthControllerImpl) Login(w http.ResponseWriter, r *http.Request) {
+func (c *Authcontroller) Login(w http.ResponseWriter, r *http.Request) {
 	var loginData mod.NewUserRequest
 	bodyJSON, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -86,7 +84,7 @@ func (c *AuthControllerImpl) Login(w http.ResponseWriter, r *http.Request) {
 	responder.SendJSONResponse(w, UserInfo)
 }
 
-func (c *AuthControllerImpl) AuthMiddleware(next http.Handler) http.Handler {
+func (c *Authcontroller) AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		Usertoken := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
 		_, _, token := c.Auth.VerifyToken(Usertoken)

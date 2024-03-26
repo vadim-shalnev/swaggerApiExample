@@ -1,0 +1,20 @@
+version: '3'
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgresuser
+      POSTGRES_PASSWORD: userpassword
+    ports:
+      - "5435:5432"
+    volumes:
+      - dbdata:/var/lib/Vad_postgresql/data
+volumes:
+  dbdata:

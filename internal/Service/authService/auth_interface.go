@@ -6,7 +6,7 @@ import (
 	repository "github.com/vadim-shalnev/swaggerApiExample/internal/Repository"
 )
 
-type AuthServiceImpl struct {
+type Authservice struct {
 	repo repository.Repository
 }
 

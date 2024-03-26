@@ -1,11 +1,173 @@
 basePath: /api/
+definitions:
+  Models.NewUserRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      role:
+        type: string
+    type: object
+  Models.NewUserResponse:
+    properties:
+      email:
+        type: string
+      role:
+        type: string
+      token:
+        $ref: '#/definitions/Models.TokenString'
+    type: object
+  Models.RequestQuery:
+    properties:
+      query:
+        type: string
+    type: object
+  Models.TokenString:
+    properties:
+      authController:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
   description: This is a geocode api server.
-  title: Geocode Api Server
+  title: Swagger Example API
   version: "1.0"
-paths: {}
+paths:
+  /api/address/geocode:
+    post:
+      consumes:
+      - application/json
+      description: Поиск координат по адресу
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/Models.RequestQuery'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Models.RequestQuery'
+      tags:
+      - geocode
+  /api/address/search:
+    post:
+      consumes:
+      - application/json
+      description: Поиск полного адреса
+      parameters:
+      - description: Bearer
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/Models.RequestQuery'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Models.RequestQuery'
+      tags:
+      - geocode
+  /api/login:
+    post:
+      consumes:
+      - application/json
+      description: Вход в систему с указанным email и паролем
+      parameters:
+      - description: Данные пользователя
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/Models.NewUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешный вход в систему
+          schema:
+            $ref: '#/definitions/Models.NewUserResponse'
+      tags:
+      - users
+  /api/register:
+    post:
+      consumes:
+      - application/json
+      description: Регистрация нового пользователя с указанным email и паролем
+      parameters:
+      - description: Данные пользователя
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/Models.NewUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешная регистрация
+          schema:
+            $ref: '#/definitions/Models.NewUserResponse'
+      tags:
+      - users
+  /users/get/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Удалить пользователя по его ID
+      parameters:
+      - description: ID пользователя
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Succsec
+          schema:
+            type: string
+      tags:
+      - users
+    get:
+      consumes:
+      - application/json
+      description: Получить информацию о пользователе по его ID
+      parameters:
+      - description: ID пользователя
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Пользователь
+          schema:
+            $ref: '#/definitions/Models.NewUserResponse'
+      tags:
+      - users
 securityDefinitions:
   ApiKeyAuth:
     in: header

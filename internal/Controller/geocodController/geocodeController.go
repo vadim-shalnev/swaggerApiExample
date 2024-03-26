@@ -3,7 +3,7 @@ package geocodController
 import (
 	"context"
 	"encoding/json"
-	mod "github.com/vadim-shalnev/swaggerApiExample/Models"
+	"github.com/vadim-shalnev/swaggerApiExample/Models"
 	responder "github.com/vadim-shalnev/swaggerApiExample/internal/Responder"
 	"github.com/vadim-shalnev/swaggerApiExample/internal/Service/geocodService"
 	"io/ioutil"
@@ -12,7 +12,7 @@ import (
 	"strings"
 )
 
-type GeocodControllerImpl struct {
+type Geocodcontroller struct {
 	Geocoder geocodService.GeocodeWorker
 }
 
@@ -21,11 +21,20 @@ type Geocoder interface {
 	HandleGeo(w http.ResponseWriter, r *http.Request)
 }
 
-func NewGeocodController(geocoder geocodService.GeocodeWorker) *GeocodControllerImpl {
-	return &GeocodControllerImpl{Geocoder: geocoder}
+func NewGeocodController(geocoder geocodService.GeocodeWorker) *Geocodcontroller {
+	return &Geocodcontroller{Geocoder: geocoder}
 }
 
-func (c *GeocodControllerImpl) HandleSearch(w http.ResponseWriter, r *http.Request) {
+// HandleSearch @Summary Поиск полного адреса
+// @Description Поиск полного адреса
+// @Tags geocode
+// @Accept  json
+// @Produce  json
+// @Param Authorization header string true "Bearer"
+// @Param request body Models.RequestQuery true "request"
+// @Success 200 {object} Models.RequestQuery
+// @Router /api/address/search [post]
+func (c *Geocodcontroller) HandleSearch(w http.ResponseWriter, r *http.Request) {
 	Usertoken := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
 	log.Println("searchToken", Usertoken)
 	ctx := context.WithValue(r.Context(), "jwt_token", Usertoken)
@@ -35,7 +44,7 @@ func (c *GeocodControllerImpl) HandleSearch(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	var searchRequest mod.RequestQuery
+	var searchRequest Models.RequestQuery
 
 	err = json.Unmarshal(bodyJSON, &searchRequest)
 	if err != nil {
@@ -51,7 +60,16 @@ func (c *GeocodControllerImpl) HandleSearch(w http.ResponseWriter, r *http.Reque
 	responder.SendJSONResponse(w, respSearch)
 }
 
-func (c *GeocodControllerImpl) HandleGeo(w http.ResponseWriter, r *http.Request) {
+// HandleGeo @Summary Поиск координат по адресу
+// @Description Поиск координат по адресу
+// @Tags geocode
+// @Accept  json
+// @Produce  json
+// @Param Authorization header string true "Bearer"
+// @Param request body Models.RequestQuery true "request"
+// @Success 200 {object} Models.RequestQuery
+// @Router /api/address/geocode [post]
+func (c *Geocodcontroller) HandleGeo(w http.ResponseWriter, r *http.Request) {
 	Usertoken := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
 	ctx := context.WithValue(r.Context(), "jwt_token", Usertoken)
 	bodyJSON, err := ioutil.ReadAll(r.Body)
@@ -60,7 +78,7 @@ func (c *GeocodControllerImpl) HandleGeo(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	var searchRequest mod.RequestQuery
+	var searchRequest Models.RequestQuery
 
 	err = json.Unmarshal(bodyJSON, &searchRequest)
 	if err != nil {

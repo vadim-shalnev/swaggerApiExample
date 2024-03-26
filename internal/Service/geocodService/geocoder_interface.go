@@ -8,7 +8,7 @@ import (
 	"github.com/vadim-shalnev/swaggerApiExample/internal/Service/authService"
 )
 
-type GeocodeWorkerImpl struct {
+type Geocodeworker struct {
 	repo repository.Repository
 	auth authService.AuthService
 }

@@ -8,7 +8,7 @@ import (
 	"log"
 )
 
-type RepositoryImpl struct {
+type RepositoryDB struct {
 	DB *sql.DB
 }
 
@@ -19,19 +19,20 @@ type Repository interface {
 	Insert(ctx context.Context, email string, query Models.RequestQuery, requestQuery Models.RequestAddress) error
 	Delete(ctx context.Context, userID int) error
 	CacheChecker(ctx context.Context, email string, historyCount int) ([]Models.SearchHistory, error)
+	List(ctx context.Context) ([]Models.User, error)
 	//Select(ctx context.Context, query mod.UserRequest) error
 	//Update(ctx context.Context, query mod.RequestUser) error
 	//CheckEmail(ctx context.Context, email string) bool
 	//CheckPassword(ctx context.Context, password string) bool
 	//GetAll(ctx context.Context, query mod.RequestUser, colomsCount int) ([]mod.RequestAddress, error)
-	//List(ctx context.Context, query mod.RequestUser) ([]mod.RequestAddress, error)
 }
 
-func NewRepositoryImpl(db *sql.DB) *RepositoryImpl {
-	return &RepositoryImpl{DB: db}
+// Таблица ответов dаdata содержит внешний ключ к таблице запросов, которая в свою очередь хранит внешний ключ таблицы пользователей
+func NewRepositoryImpl(db *sql.DB) *RepositoryDB {
+	return &RepositoryDB{DB: db}
 }
 
-func (r *RepositoryImpl) CreateUser(ctx context.Context, user Models.NewUserRequest) error {
+func (r *RepositoryDB) CreateUser(ctx context.Context, user Models.NewUserRequest) error {
 	_, err := r.DB.Exec("INSERT INTO users (email, password, role, created_at, deleted_at) VALUES ($1, $2, $3, CURRENT_TIMESTAMP, NULL)", user.Email, user.Password, user.Role)
 	if err != nil {
 		log.Println("Error creating user:", err)
@@ -39,7 +40,7 @@ func (r *RepositoryImpl) CreateUser(ctx context.Context, user Models.NewUserRequ
 	}
 	return nil
 }
-func (r *RepositoryImpl) GetByEmail(ctx context.Context, email string) (Models.User, error) {
+func (r *RepositoryDB) GetByEmail(ctx context.Context, email string) (Models.User, error) {
 	var user Models.User
 
 	err := r.DB.QueryRowContext(ctx, "SELECT id, email, password, role, created_at, deleted_at FROM users WHERE email = $1", email).Scan(&user.ID, &user.Email, &user.Password, &user.Role, &user.CreatedAt, &user.DeletedAt)
@@ -59,7 +60,7 @@ func (r *RepositoryImpl) GetByEmail(ctx context.Context, email string) (Models.U
 	return user, nil
 }
 
-func (r *RepositoryImpl) GetByID(ctx context.Context, id int) (Models.User, error) {
+func (r *RepositoryDB) GetByID(ctx context.Context, id int) (Models.User, error) {
 	var user Models.User
 
 	err := r.DB.QueryRow("SELECT id, email, password, role, created_at, deleted_at FROM users WHERE id = $1", id).Scan(&user.ID, &user.Email, &user.Password, &user.Role, &user.CreatedAt, &user.DeletedAt)
@@ -75,7 +76,7 @@ func (r *RepositoryImpl) GetByID(ctx context.Context, id int) (Models.User, erro
 	}
 	return user, nil
 }
-func (r *RepositoryImpl) Insert(ctx context.Context, email string, query Models.RequestQuery, requestQuery Models.RequestAddress) error {
+func (r *RepositoryDB) Insert(ctx context.Context, email string, query Models.RequestQuery, requestQuery Models.RequestAddress) error {
 	// Начало транзакции
 	tx, err := r.DB.BeginTx(ctx, nil)
 	if err != nil {
@@ -110,7 +111,7 @@ func (r *RepositoryImpl) Insert(ctx context.Context, email string, query Models.
 
 	return nil
 }
-func (r *RepositoryImpl) Delete(ctx context.Context, userID int) error {
+func (r *RepositoryDB) Delete(ctx context.Context, userID int) error {
 	_, err := r.DB.ExecContext(ctx, "UPDATE users SET deleted_at = CURRENT_TIMESTAMP WHERE id = $1", userID)
 	if err != nil {
 		log.Println("Error deleting user:", err)
@@ -119,7 +120,7 @@ func (r *RepositoryImpl) Delete(ctx context.Context, userID int) error {
 	return nil
 }
 
-func (r *RepositoryImpl) CacheChecker(ctx context.Context, email string, historyCount int) ([]Models.SearchHistory, error) {
+func (r *RepositoryDB) CacheChecker(ctx context.Context, email string, historyCount int) ([]Models.SearchHistory, error) {
 	log.Println("cachechecker repo is start", email, historyCount)
 	// ходим в базу поисковых запросов и базу ответов дадата
 	tx, err := r.DB.BeginTx(ctx, nil)
@@ -169,4 +170,25 @@ func (r *RepositoryImpl) CacheChecker(ctx context.Context, email string, history
 	}
 
 	return searchHistories, nil
+}
+func (r *RepositoryDB) List(ctx context.Context) ([]Models.User, error) {
+	var users []Models.User
+	rows, err := r.DB.QueryContext(ctx, "SELECT id, email, password, role, created_at, deleted_at FROM users")
+	if err != nil {
+		log.Println("Error querying users:", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var user Models.User
+		err = rows.Scan(&user.ID, &user.Email, &user.Password, &user.Role, &user.CreatedAt, &user.DeletedAt)
+		if err != nil {
+			log.Println("Error scanning user:", err)
+			return nil, err
+		}
+		users = append(users, user)
+	}
+
+	return users, nil
 }

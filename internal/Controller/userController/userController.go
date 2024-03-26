@@ -10,19 +10,28 @@ import (
 	"strings"
 )
 
-type UserControllerImpl struct {
+type Usercontroller struct {
 	Service userService.UserService
 }
 type UserController interface {
 	GetUser(w http.ResponseWriter, r *http.Request)
 	DelUser(w http.ResponseWriter, r *http.Request)
+	ListUsers(w http.ResponseWriter, r *http.Request)
 }
 
-func NewUserController(service userService.UserService) *UserControllerImpl {
-	return &UserControllerImpl{Service: service}
+func NewUserController(service userService.UserService) *Usercontroller {
+	return &Usercontroller{Service: service}
 }
 
-func (c *UserControllerImpl) GetUser(w http.ResponseWriter, r *http.Request) {
+// GetUser @Summary Получить информацию о пользователе
+// @Description Получить информацию о пользователе по его ID
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param id path int true "ID пользователя"
+// @Success 200 {object} Models.NewUserResponse "Пользователь"
+// @Router /users/get/{id} [get]
+func (c *Usercontroller) GetUser(w http.ResponseWriter, r *http.Request) {
 	Usertoken := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
 	ctx := context.WithValue(r.Context(), "jwt_token", Usertoken)
 	userID := chi.URLParam(r, "id")
@@ -36,7 +45,15 @@ func (c *UserControllerImpl) GetUser(w http.ResponseWriter, r *http.Request) {
 	responder.SendJSONResponse(w, UserInfo)
 }
 
-func (c *UserControllerImpl) DelUser(w http.ResponseWriter, r *http.Request) {
+// DelUser @Summary Удалить пользователя
+// @Description Удалить пользователя по его ID
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param id path int true "ID пользователя"
+// @Success 200 {string} string "Succsec"
+// @Router /users/get/{id} [delete]
+func (c *Usercontroller) DelUser(w http.ResponseWriter, r *http.Request) {
 	Usertoken := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
 	ctx := context.WithValue(r.Context(), "jwt_token", Usertoken)
 	userID := chi.URLParam(r, "id")
@@ -47,4 +64,15 @@ func (c *UserControllerImpl) DelUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	responder.SendJSONResponse(w, "Succsec")
+}
+
+func (c *Usercontroller) ListUsers(w http.ResponseWriter, r *http.Request) {
+	Usertoken := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
+	ctx := context.WithValue(r.Context(), "jwt_token", Usertoken)
+	UserInfo, err := c.Service.ListUsers(ctx)
+	if err != nil {
+		responder.HandleError(w, err)
+		return
+	}
+	responder.SendJSONResponse(w, UserInfo)
 }
