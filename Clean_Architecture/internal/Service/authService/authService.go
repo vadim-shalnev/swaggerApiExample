@@ -5,9 +5,9 @@ import (
 	"errors"
 	"github.com/go-chi/jwtauth/v5"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Cryptografi"
 	mod "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Models"
-	repository "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Repository"
+	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/internal/Cryptografi"
+	repository "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/internal/Repository"
 	"log"
 	"strings"
 	"time"
@@ -28,11 +28,11 @@ func (a *AuthServiceImpl) Register(ctx context.Context, regData mod.NewUserReque
 	userResponse.Role = regData.Role
 
 	// Хэшируем пароль и добавляем его в запрос к БД
-	err = Cryptografi.HashPassword(&regData)
+	hashPass, err := Cryptografi.HashPassword(regData)
 	if err != nil {
 		return mod.NewUserResponse{}, errors.New("failed to hash password")
 	}
-	err = a.repo.CreateUser(ctx, regData)
+	err = a.repo.CreateUser(ctx, hashPass)
 	if err != nil {
 		return mod.NewUserResponse{}, errors.New("failed to add new userController to the database")
 	}
@@ -45,6 +45,7 @@ func (a *AuthServiceImpl) Login(ctx context.Context, loginData mod.NewUserReques
 	userResponse.Email = loginData.Email
 	userResponse.Role = loginData.Role
 	userToken := ctx.Value("jwt_token").(string)
+	log.Println("ligintoken", userToken)
 	emailValid, passwordValid, tokenValid := a.UserInfoChecker(ctx, loginData.Email, loginData.Password, userToken)
 	if !emailValid {
 		return mod.NewUserResponse{}, errors.New("invalid email")
@@ -54,6 +55,7 @@ func (a *AuthServiceImpl) Login(ctx context.Context, loginData mod.NewUserReques
 	}
 	if !tokenValid {
 		freshToken := a.RefreshToken(ctx, loginData.Email, loginData.Password)
+		log.Println("freshtoken", freshToken)
 		userResponse.Token.Token = freshToken
 		return mod.NewUserResponse{}, errors.New("you have successfully logged out of the service")
 	}
@@ -62,6 +64,7 @@ func (a *AuthServiceImpl) Login(ctx context.Context, loginData mod.NewUserReques
 
 func (a *AuthServiceImpl) UserInfoChecker(ctx context.Context, email, password, token string) (bool, bool, bool) {
 	email, _, tokenValid := a.VerifyToken(token)
+	log.Println("UserInfoChecker email", email)
 	user, _ := a.repo.GetByEmail(ctx, email)
 	if !tokenValid {
 		return false, false, false
@@ -72,11 +75,14 @@ func (a *AuthServiceImpl) UserInfoChecker(ctx context.Context, email, password, 
 	} else {
 		log.Println("!"+user.Email+"!", "!"+email+"!", "true")
 	}
-	if err := Cryptografi.CheckPassword(password, user.Password); err != nil {
-		return false, false, false
+
+	if err := Cryptografi.CheckPassword(user.Password, password); err != nil {
 		log.Println("check pass is false")
+		return false, false, false
+	} else {
+		log.Println("check is ok", password, user.Password)
 	}
-	log.Println("check is ok")
+
 	return true, true, tokenValid
 }
 

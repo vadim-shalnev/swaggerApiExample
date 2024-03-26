@@ -45,13 +45,15 @@ func (r *RepositoryImpl) GetByEmail(ctx context.Context, email string) (mod.User
 	err := r.DB.QueryRowContext(ctx, "SELECT id, email, password, role, created_at, deleted_at FROM users WHERE email = $1", email).Scan(&user.ID, &user.Email, &user.Password, &user.Role, &user.CreatedAt, &user.DeletedAt)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return mod.User{}, errors.New("user not found")
+			log.Println("User not found", email)
+			return mod.User{}, err
 		}
 		log.Println("Error getting user by email:", err)
 		return mod.User{}, err
 	}
 	if user.DeletedAt != nil {
-		return mod.User{}, errors.New("user not found")
+		log.Println("User deleted", email)
+		return mod.User{}, err
 	}
 
 	return user, nil
@@ -86,14 +88,14 @@ func (r *RepositoryImpl) Insert(ctx context.Context, email string, query mod.Req
 		return err
 	}
 	var queryID int
-	err = tx.QueryRow("INSERT INTO qwery_history (user_key, query, created_date, deleted_date) VALUES ($1, $2, CURRENT_TIMESTAMP, NULL) RETURNING id", userID.ID, query.Query).Scan(&queryID)
+	err = tx.QueryRow("INSERT INTO qwery_history (user_key, query, created_at, deleted_at) VALUES ($1, $2, CURRENT_TIMESTAMP, NULL) RETURNING id", userID.ID, query.Query).Scan(&queryID)
 	if err != nil {
 		log.Println("Error adding query:", err)
 		return err
 	}
 
 	// Добавление результата в response_history
-	_, err = tx.Exec("INSERT INTO response_history (qwery_key, address, lng, lat, created_date, deleted_date) VALUES ($1, $2, CURRENT_TIMESTAMP, NULL)", queryID, requestQuery.Addres, requestQuery.RequestSearch.Lng, requestQuery.RequestSearch.Lat)
+	_, err = tx.Exec("INSERT INTO response_history (qwery_key, address, lng, lat, created_at, deleted_at) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP, NULL)", queryID, requestQuery.Addres, requestQuery.RequestSearch.Lng, requestQuery.RequestSearch.Lat)
 	if err != nil {
 		log.Println("Error adding result:", err)
 		return err
@@ -118,6 +120,7 @@ func (r *RepositoryImpl) Delete(ctx context.Context, userID int) error {
 }
 
 func (r *RepositoryImpl) CacheChecker(ctx context.Context, email string, historyCount int) ([]mod.SearchHistory, error) {
+	log.Println("cachechecker repo is start", email, historyCount)
 	// ходим в базу поисковых запросов и базу ответов дадата
 	tx, err := r.DB.BeginTx(ctx, nil)
 	if err != nil {
@@ -125,17 +128,18 @@ func (r *RepositoryImpl) CacheChecker(ctx context.Context, email string, history
 	}
 	defer tx.Rollback()
 	// получаем id пользователя из базы данных
-	userID, err := r.GetByEmail(ctx, email)
+	user, err := r.GetByEmail(ctx, email)
 	if err != nil {
 		return []mod.SearchHistory{}, err
 	}
+	userID := user.ID
 	// получаем последние n поисковых запросов из базы данных
 	query := `
         SELECT q.id, q.query, r.address, r.lng, r.lat
         FROM qwery_history q
         LEFT JOIN response_history r ON q.id = r.qwery_key
         WHERE q.user_key = $1
-        ORDER BY q.created_date DESC
+        ORDER BY q.created_at DESC
         LIMIT $2
     `
 	rows, err := tx.QueryContext(ctx, query, userID, historyCount)

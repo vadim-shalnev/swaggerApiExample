@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   controller:
-    build: ./Controller
+    build: internal/Controller
     ports:
       - "8080:8080"
     networks:
@@ -10,7 +10,7 @@ services:
       - content:/app/content
 
   service:
-    build: ./Service
+    build: internal/Service
     ports:
       - "8090:8090"
     networks:
@@ -19,7 +19,7 @@ services:
       - content:/app/content
 
   repository:
-    build: ./Repository
+    build: internal/Repository
     ports:
       - "8070:8070"
     networks:

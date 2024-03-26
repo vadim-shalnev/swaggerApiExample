@@ -4,21 +4,23 @@ import (
 	"github.com/agnivade/levenshtein"
 	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Models"
 	"golang.org/x/crypto/bcrypt"
+	"log"
 )
 
 // Метод для шифрования пароля
-func HashPassword(user *Models.NewUserRequest) error {
+func HashPassword(user Models.NewUserRequest) (Models.NewUserRequest, error) {
 	password := user.Password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		return err
+		return Models.NewUserRequest{}, err
 	}
 	user.Password = string(hashedPassword)
-	return nil
+	return user, nil
 }
 func CheckPassword(hashedPassword string, password string) error {
 	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 	if err != nil {
+		log.Println("Неверный пароль", hashedPassword, password)
 		return err
 	}
 	return nil

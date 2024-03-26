@@ -7,10 +7,10 @@ import (
 	"github.com/ekomobile/dadata/v2"
 	"github.com/ekomobile/dadata/v2/api/model"
 	"github.com/ekomobile/dadata/v2/client"
-	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Cryptografi"
 	mod "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Models"
-	repository "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Repository"
-	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Service/authService"
+	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/internal/Cryptografi"
+	repository "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/internal/Repository"
+	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/internal/Service/authService"
 	"log"
 )
 
@@ -23,7 +23,7 @@ func NewgeocodeService(repository repository.Repository, aothorisation authServi
 	return &GeocodeWorkerImpl{repo: repository, auth: aothorisation}
 }
 
-func (d *GeocodeWorkerImpl) Search(ctx context.Context, userRequest mod.RequestQuery) (interface{}, error) {
+func (d *GeocodeWorkerImpl) Search(ctx context.Context, userRequest mod.RequestQuery) (mod.RequestQuery, error) {
 	var responseQuery mod.RequestQuery
 	resp, err := d.HandleWorker(ctx, userRequest)
 	if err != nil {
@@ -34,7 +34,7 @@ func (d *GeocodeWorkerImpl) Search(ctx context.Context, userRequest mod.RequestQ
 	return responseQuery, nil
 }
 
-func (d *GeocodeWorkerImpl) Address(ctx context.Context, userRequest mod.RequestQuery) (interface{}, error) {
+func (d *GeocodeWorkerImpl) Address(ctx context.Context, userRequest mod.RequestQuery) (mod.RequestQuery, error) {
 	var responseQuery mod.RequestQuery
 	resp, err := d.HandleWorker(ctx, userRequest)
 	if err != nil {
@@ -48,6 +48,7 @@ func (d *GeocodeWorkerImpl) Address(ctx context.Context, userRequest mod.Request
 func (d *GeocodeWorkerImpl) HandleWorker(ctx context.Context, query mod.RequestQuery) (mod.RequestAddress, error) {
 	var requestQuery mod.RequestAddress
 	ok, cache, email, err := d.CacheChecker(ctx, query, 5)
+	log.Println("handleemail", email, ok)
 	if err != nil {
 		log.Println("ошибка проверки кэша", err)
 	}
@@ -69,6 +70,7 @@ func (d *GeocodeWorkerImpl) HandleWorker(ctx context.Context, query mod.RequestQ
 	}
 	err = d.repo.Insert(ctx, email, query, requestQuery)
 	if err != nil {
+		log.Println("ошибка записи в репо", err)
 		return mod.RequestAddress{}, errors.New("Select query error")
 	}
 	return requestQuery, nil
@@ -82,11 +84,13 @@ func (d *GeocodeWorkerImpl) CacheChecker(ctx context.Context, query mod.RequestQ
 	if err != nil {
 		return false, mod.RequestAddress{}, "", err
 	}
-	levanshtain, ok := Cryptografi.Levanshtain(searchHistory, query.Query)
-	if ok {
-		return true, levanshtain, email, nil
+	if searchHistory == nil || len(searchHistory) == 0 {
+		levenshtein, ok := Cryptografi.Levanshtain(searchHistory, query.Query)
+		if ok {
+			return true, levenshtein, email, nil
+		}
 	}
-	return false, mod.RequestAddress{}, "", nil
+	return false, mod.RequestAddress{}, email, nil
 }
 
 func (d *GeocodeWorkerImpl) Geocode(query mod.RequestQuery) ([]*model.Address, error) {

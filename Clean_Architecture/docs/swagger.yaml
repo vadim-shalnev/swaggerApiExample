@@ -1,0 +1,14 @@
+basePath: /api/
+host: localhost:8080
+info:
+  contact: {}
+  description: This is a geocode api server.
+  title: Geocode Api Server
+  version: "1.0"
+paths: {}
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

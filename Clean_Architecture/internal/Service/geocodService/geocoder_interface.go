@@ -4,8 +4,8 @@ import (
 	"context"
 	"github.com/ekomobile/dadata/v2/api/model"
 	mod "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Models"
-	repository "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Repository"
-	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Service/authService"
+	repository "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/internal/Repository"
+	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/internal/Service/authService"
 )
 
 type GeocodeWorkerImpl struct {
@@ -14,8 +14,8 @@ type GeocodeWorkerImpl struct {
 }
 
 type GeocodeWorker interface {
-	Search(ctx context.Context, userRequest mod.RequestQuery) (interface{}, error)
-	Address(ctx context.Context, userRequest mod.RequestQuery) (interface{}, error)
+	Search(ctx context.Context, userRequest mod.RequestQuery) (mod.RequestQuery, error)
+	Address(ctx context.Context, userRequest mod.RequestQuery) (mod.RequestQuery, error)
 	HandleWorker(ctx context.Context, query mod.RequestQuery) (mod.RequestAddress, error)
 	CacheChecker(ctx context.Context, query mod.RequestQuery, ttl int) (bool, mod.RequestAddress, string, error)
 	Geocode(query mod.RequestQuery) ([]*model.Address, error)

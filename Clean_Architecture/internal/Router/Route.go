@@ -3,9 +3,9 @@ package Router
 import (
 	"github.com/go-chi/chi/v5"
 	httpSwagger "github.com/swaggo/http-swagger"
-	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Controller/authController"
-	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Controller/geocodController"
-	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Controller/userController"
+	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/internal/Controller/authController"
+	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/internal/Controller/geocodController"
+	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/internal/Controller/userController"
 	"net/http"
 )
 

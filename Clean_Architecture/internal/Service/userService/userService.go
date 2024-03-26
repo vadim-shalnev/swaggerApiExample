@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	mod "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Models"
-	repository "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Repository"
+	repository "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/internal/Repository"
 	"strconv"
 )
 

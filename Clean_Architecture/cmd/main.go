@@ -3,17 +3,27 @@ package main
 import (
 	"database/sql"
 	_ "github.com/lib/pq"
-	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Controller/authController"
-	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Controller/geocodController"
-	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Controller/userController"
-	repository "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Repository"
-	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Router"
-	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Service/authService"
-	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Service/geocodService"
-	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/Service/userService"
+	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/internal/Controller/authController"
+	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/internal/Controller/geocodController"
+	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/internal/Controller/userController"
+	repository "github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/internal/Repository"
+	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/internal/Router"
+	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/internal/Service/authService"
+	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/internal/Service/geocodService"
+	"github.com/vadim-shalnev/swaggerApiExample/Clean_Architecture/internal/Service/userService"
 	"log"
 	"net/http"
 )
+
+// @title Geocode Api Server
+// @version 1.0
+// @description This is a geocode api server.
+
+// @host localhost:8080
+// @BasePath /api/
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 
 func main() {
 	db, err := sql.Open("postgres", "host=localhost port=5432 user=vubuntu password=qwerty dbname=vubuntu sslmode=disable")
