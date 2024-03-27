@@ -4,10 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/vadim-shalnev/swaggerApiExample/Models"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/Geocoder/geocodService"
 	responder "github.com/vadim-shalnev/swaggerApiExample/internal/Responder"
-	"github.com/vadim-shalnev/swaggerApiExample/internal/Service/geocodService"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strings"
 )
@@ -36,7 +35,6 @@ func NewGeocodController(geocoder geocodService.GeocodeWorker) *Geocodcontroller
 // @Router /api/address/search [post]
 func (c *Geocodcontroller) HandleSearch(w http.ResponseWriter, r *http.Request) {
 	Usertoken := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
-	log.Println("searchToken", Usertoken)
 	ctx := context.WithValue(r.Context(), "jwt_token", Usertoken)
 	bodyJSON, err := ioutil.ReadAll(r.Body)
 	if err != nil {

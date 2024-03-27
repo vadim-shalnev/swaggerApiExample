@@ -8,9 +8,9 @@ import (
 	"github.com/ekomobile/dadata/v2/api/model"
 	"github.com/ekomobile/dadata/v2/client"
 	mod "github.com/vadim-shalnev/swaggerApiExample/Models"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/Auth/authService"
 	"github.com/vadim-shalnev/swaggerApiExample/internal/Cryptografi"
 	repository "github.com/vadim-shalnev/swaggerApiExample/internal/Repository"
-	"github.com/vadim-shalnev/swaggerApiExample/internal/Service/authService"
 	"log"
 )
 
@@ -52,7 +52,6 @@ func (d *Geocodeworker) HandleWorker(ctx context.Context, query mod.RequestQuery
 		log.Println("ошибка проверки кэша", err)
 	}
 	if ok {
-		log.Println("отдаем из кэша")
 		requestQuery.Addres = cache.Addres
 		requestQuery.RequestSearch.Lat = cache.RequestSearch.Lat
 		requestQuery.RequestSearch.Lng = cache.RequestSearch.Lng

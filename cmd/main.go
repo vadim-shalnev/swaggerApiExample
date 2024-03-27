@@ -3,14 +3,14 @@ package main
 import (
 	"database/sql"
 	_ "github.com/lib/pq"
-	"github.com/vadim-shalnev/swaggerApiExample/internal/Controller/authController"
-	"github.com/vadim-shalnev/swaggerApiExample/internal/Controller/geocodController"
-	"github.com/vadim-shalnev/swaggerApiExample/internal/Controller/userController"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/Auth/authController"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/Auth/authService"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/Geocoder/geocodController"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/Geocoder/geocodService"
 	repository "github.com/vadim-shalnev/swaggerApiExample/internal/Repository"
 	"github.com/vadim-shalnev/swaggerApiExample/internal/Router"
-	"github.com/vadim-shalnev/swaggerApiExample/internal/Service/authService"
-	"github.com/vadim-shalnev/swaggerApiExample/internal/Service/geocodService"
-	"github.com/vadim-shalnev/swaggerApiExample/internal/Service/userService"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/User/userController"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/User/userService"
 	"log"
 	"net/http"
 	"time"
@@ -26,8 +26,9 @@ import (
 // @in header
 // @name Authorization
 func main() {
+	// добавил задержку т.к. постгрес в контейнере шалил и не хотел запускаться
 	time.Sleep(time.Second * 5)
-	db, err := sql.Open("postgres", "host=db port=5432 user=postgresuser password=userpassword dbname=postgres sslmode=disable")
+	db, err := sql.Open("postgres", "host=db port=5432 User=postgresuser password=userpassword dbname=postgres sslmode=disable")
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)
 	}

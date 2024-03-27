@@ -35,8 +35,8 @@ func NewRepositoryImpl(db *sql.DB) *RepositoryDB {
 func (r *RepositoryDB) CreateUser(ctx context.Context, user Models.NewUserRequest) error {
 	_, err := r.DB.Exec("INSERT INTO users (email, password, role, created_at, deleted_at) VALUES ($1, $2, $3, CURRENT_TIMESTAMP, NULL)", user.Email, user.Password, user.Role)
 	if err != nil {
-		log.Println("Error creating user:", err)
-		return errors.New("failed to create user")
+		log.Println("Error creating User:", err)
+		return errors.New("failed to create User")
 	}
 	return nil
 }
@@ -49,7 +49,7 @@ func (r *RepositoryDB) GetByEmail(ctx context.Context, email string) (Models.Use
 			log.Println("User not found", email)
 			return Models.User{}, err
 		}
-		log.Println("Error getting user by email:", err)
+		log.Println("Error getting User by email:", err)
 		return Models.User{}, err
 	}
 	if user.DeletedAt != nil {
@@ -66,13 +66,13 @@ func (r *RepositoryDB) GetByID(ctx context.Context, id int) (Models.User, error)
 	err := r.DB.QueryRow("SELECT id, email, password, role, created_at, deleted_at FROM users WHERE id = $1", id).Scan(&user.ID, &user.Email, &user.Password, &user.Role, &user.CreatedAt, &user.DeletedAt)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return Models.User{}, errors.New("user not found")
+			return Models.User{}, errors.New("User not found")
 		}
-		log.Println("Error getting user by email:", err)
+		log.Println("Error getting User by email:", err)
 		return Models.User{}, err
 	}
 	if user.DeletedAt != nil {
-		return Models.User{}, errors.New("user not found")
+		return Models.User{}, errors.New("User not found")
 	}
 	return user, nil
 }
@@ -114,14 +114,13 @@ func (r *RepositoryDB) Insert(ctx context.Context, email string, query Models.Re
 func (r *RepositoryDB) Delete(ctx context.Context, userID int) error {
 	_, err := r.DB.ExecContext(ctx, "UPDATE users SET deleted_at = CURRENT_TIMESTAMP WHERE id = $1", userID)
 	if err != nil {
-		log.Println("Error deleting user:", err)
+		log.Println("Error deleting User:", err)
 		return err
 	}
 	return nil
 }
 
 func (r *RepositoryDB) CacheChecker(ctx context.Context, email string, historyCount int) ([]Models.SearchHistory, error) {
-	log.Println("cachechecker repo is start", email, historyCount)
 	// ходим в базу поисковых запросов и базу ответов дадата
 	tx, err := r.DB.BeginTx(ctx, nil)
 	if err != nil {
@@ -184,7 +183,7 @@ func (r *RepositoryDB) List(ctx context.Context) ([]Models.User, error) {
 		var user Models.User
 		err = rows.Scan(&user.ID, &user.Email, &user.Password, &user.Role, &user.CreatedAt, &user.DeletedAt)
 		if err != nil {
-			log.Println("Error scanning user:", err)
+			log.Println("Error scanning User:", err)
 			return nil, err
 		}
 		users = append(users, user)

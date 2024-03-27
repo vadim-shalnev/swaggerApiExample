@@ -110,7 +110,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "description": "Данные пользователя",
-                        "name": "user",
+                        "name": "User",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -143,7 +143,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "description": "Данные пользователя",
-                        "name": "user",
+                        "name": "User",
                         "in": "body",
                         "required": true,
                         "schema": {

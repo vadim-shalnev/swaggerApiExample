@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/go-chi/chi/v5"
 	responder "github.com/vadim-shalnev/swaggerApiExample/internal/Responder"
-	"github.com/vadim-shalnev/swaggerApiExample/internal/Service/userService"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/User/userService"
 	"log"
 	"net/http"
 	"strings"
@@ -35,7 +35,6 @@ func (c *Usercontroller) GetUser(w http.ResponseWriter, r *http.Request) {
 	Usertoken := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
 	ctx := context.WithValue(r.Context(), "jwt_token", Usertoken)
 	userID := chi.URLParam(r, "id")
-	log.Println("get id is", userID)
 	UserInfo, err := c.Service.GetUser(ctx, userID)
 	if err != nil {
 		responder.HandleError(w, err)
@@ -57,7 +56,6 @@ func (c *Usercontroller) DelUser(w http.ResponseWriter, r *http.Request) {
 	Usertoken := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
 	ctx := context.WithValue(r.Context(), "jwt_token", Usertoken)
 	userID := chi.URLParam(r, "id")
-	log.Println("del id is", userID)
 	err := c.Service.DelUser(ctx, userID)
 	if err != nil {
 		responder.HandleError(w, err)
@@ -66,6 +64,7 @@ func (c *Usercontroller) DelUser(w http.ResponseWriter, r *http.Request) {
 	responder.SendJSONResponse(w, "Succsec")
 }
 
+// не отражаю это в свагере, т.к. по идее это админская функция, а не для клиента
 func (c *Usercontroller) ListUsers(w http.ResponseWriter, r *http.Request) {
 	Usertoken := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
 	ctx := context.WithValue(r.Context(), "jwt_token", Usertoken)

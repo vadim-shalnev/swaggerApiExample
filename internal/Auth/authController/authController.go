@@ -4,8 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	mod "github.com/vadim-shalnev/swaggerApiExample/Models"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/Auth/authService"
 	responder "github.com/vadim-shalnev/swaggerApiExample/internal/Responder"
-	"github.com/vadim-shalnev/swaggerApiExample/internal/Service/authService"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -29,7 +29,7 @@ func NewAuthController(auth authService.AuthService) *Authcontroller {
 // @Tags reg
 // @Accept json
 // @Produce json
-// @Param   user body mod.NewUserRequest true "Данные пользователя"
+// @Param   User body mod.NewUserRequest true "Данные пользователя"
 // @Success 200 {object} mod.NewUserResponse "Успешная регистрация"
 // @Router /api/register [post]
 func (c *Authcontroller) Register(w http.ResponseWriter, r *http.Request) {
@@ -58,7 +58,7 @@ func (c *Authcontroller) Register(w http.ResponseWriter, r *http.Request) {
 // @Tags reg
 // @Accept json
 // @Produce json
-// @Param   user body mod.NewUserRequest true "Данные пользователя"
+// @Param   User body mod.NewUserRequest true "Данные пользователя"
 // @Success 200 {object} mod.NewUserResponse "Успешный вход в систему"
 // @Router /api/login [post]
 func (c *Authcontroller) Login(w http.ResponseWriter, r *http.Request) {

@@ -7,7 +7,6 @@ import (
 	"log"
 )
 
-// Метод для шифрования пароля
 func HashPassword(user Models2.NewUserRequest) (Models2.NewUserRequest, error) {
 	password := user.Password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)

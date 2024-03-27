@@ -95,7 +95,7 @@ paths:
       parameters:
       - description: Данные пользователя
         in: body
-        name: user
+        name: User
         required: true
         schema:
           $ref: '#/definitions/Models.NewUserRequest'
@@ -116,7 +116,7 @@ paths:
       parameters:
       - description: Данные пользователя
         in: body
-        name: user
+        name: User
         required: true
         schema:
           $ref: '#/definitions/Models.NewUserRequest'

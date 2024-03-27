@@ -4,9 +4,9 @@ import (
 	"github.com/go-chi/chi/v5"
 	httpSwagger "github.com/swaggo/http-swagger"
 	_ "github.com/vadim-shalnev/swaggerApiExample/docs"
-	"github.com/vadim-shalnev/swaggerApiExample/internal/Controller/authController"
-	"github.com/vadim-shalnev/swaggerApiExample/internal/Controller/geocodController"
-	"github.com/vadim-shalnev/swaggerApiExample/internal/Controller/userController"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/Auth/authController"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/Geocoder/geocodController"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/User/userController"
 	"net/http"
 )
 
@@ -15,7 +15,7 @@ func New_router(controllerAuth *authController.Authcontroller, controllerUser *u
 	controller := controllerAuth
 	r.Post("/api/register", controller.Register)
 	r.Post("/api/login", controller.Login)
-	r.Route("/api/user", func(r chi.Router) {
+	r.Route("/api/User", func(r chi.Router) {
 		r.Use(controller.AuthMiddleware)
 		r.Get("/get/{id}", controllerUser.GetUser)
 		r.Get("/list/", controllerUser.ListUsers)
