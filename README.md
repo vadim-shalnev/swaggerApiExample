@@ -1,1 +1,2 @@
-# Geocode api server
+# Привет. Слой репозитория хочу зарефакторить, по этому в репо сечас только sql запросы.
+# Алгоритм левенштейна в слое бизнес-логики - https://github.com/vadim-shalnev/swaggerApiExample/blob/main/internal/Geocoder/geocodService/geocodService.go#78 
