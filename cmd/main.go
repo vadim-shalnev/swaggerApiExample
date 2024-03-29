@@ -15,6 +15,7 @@ import (
 	"github.com/vadim-shalnev/swaggerApiExample/internal/User/userService"
 	"log"
 	"net/http"
+	"time"
 )
 
 // @title Swagger Example API
@@ -27,15 +28,9 @@ import (
 // @in header
 // @name Authorization
 func main() {
-	/*
-		db, err := sql.Open("postgres", "host=db port=5432 User=postgresuser password=userpassword dbname=postgres sslmode=disable")
-		if err != nil {
-			log.Fatal("Failed to connect to database:", err)
-		}
-		defer db.Close()
+	time.Sleep(time.Second * 5)
 
-	*/
-	db, err := sql.Open("postgres", "host=localhost port=5432 user=vubuntu password=qwerty dbname=vubuntu sslmode=disable")
+	db, err := sql.Open("postgres", "host=db port=5432 user=postgresuser password=userpassword dbname=postgres sslmode=disable")
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)
 	}

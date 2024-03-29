@@ -5,23 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="79509455-0791-4ce8-ac74-35d8481e82e3" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/internal/Auth/authRepository/authRepository.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/Auth/authRepository/auth_interface.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/Geocoder/geocodeRepository/geocodeRepository.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/Geocoder/geocodeRepository/geocode_interface.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/User/userRepository/userRepository.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/User/userRepository/user_interface.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/client/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmd/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Auth/authService/authService.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Auth/authService/authService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Auth/authService/auth_interface.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Auth/authService/auth_interface.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Geocoder/geocodService/geocodService.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Geocoder/geocodService/geocodService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Geocoder/geocodService/geocoder_interface.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Geocoder/geocodService/geocoder_interface.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Repository/repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Repository/repository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/Router/Route.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Router/Route.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/User/userService/userService.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/User/userService/userService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/User/userService/user_interface.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/User/userService/user_interface.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
