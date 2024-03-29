@@ -15,7 +15,7 @@ func New_router(controllerAuth *authController.Authcontroller, controllerUser *u
 	controller := controllerAuth
 	r.Post("/api/register", controller.Register)
 	r.Post("/api/login", controller.Login)
-	r.Route("/api/User", func(r chi.Router) {
+	r.Route("/api/user", func(r chi.Router) {
 		r.Use(controller.AuthMiddleware)
 		r.Get("/get/{id}", controllerUser.GetUser)
 		r.Get("/list/", controllerUser.ListUsers)

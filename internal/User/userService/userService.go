@@ -4,11 +4,11 @@ import (
 	"context"
 	"errors"
 	mod "github.com/vadim-shalnev/swaggerApiExample/Models"
-	repository "github.com/vadim-shalnev/swaggerApiExample/internal/Repository"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/User/userRepository"
 	"strconv"
 )
 
-func NewAuthService(repository repository.Repository) *Userservice {
+func NewAuthService(repository userRepository.UserRepository) *Userservice {
 	return &Userservice{repo: repository}
 }
 

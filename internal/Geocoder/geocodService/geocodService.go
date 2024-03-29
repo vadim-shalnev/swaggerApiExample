@@ -10,7 +10,7 @@ import (
 	mod "github.com/vadim-shalnev/swaggerApiExample/Models"
 	"github.com/vadim-shalnev/swaggerApiExample/internal/Auth/authService"
 	"github.com/vadim-shalnev/swaggerApiExample/internal/Cryptografi"
-	repository "github.com/vadim-shalnev/swaggerApiExample/internal/Repository"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/Geocoder/geocodeRepository"
 	"log"
 )
 
@@ -19,7 +19,7 @@ const (
 	SecretKey = "adf07bdd63b240ae60087efd2e72269b9c65cc91"
 )
 
-func NewgeocodeService(repository repository.Repository, aothorisation authService.AuthService) *Geocodeworker {
+func NewgeocodeService(repository geocodeRepository.GeocodeRepository, aothorisation authService.AuthService) *Geocodeworker {
 	return &Geocodeworker{repo: repository, auth: aothorisation}
 }
 
@@ -75,6 +75,7 @@ func (d *Geocodeworker) HandleWorker(ctx context.Context, query mod.RequestQuery
 	return requestQuery, nil
 }
 
+// Левенштейн для кэша
 func (d *Geocodeworker) CacheChecker(ctx context.Context, query mod.RequestQuery, ttl int) (bool, mod.RequestAddress, string, error) {
 	userToken := ctx.Value("jwt_token").(string)
 	email, _, _ := d.auth.VerifyToken(userToken)
@@ -83,7 +84,7 @@ func (d *Geocodeworker) CacheChecker(ctx context.Context, query mod.RequestQuery
 	if err != nil {
 		return false, mod.RequestAddress{}, "", err
 	}
-	if searchHistory == nil || len(searchHistory) == 0 {
+	if searchHistory != nil || len(searchHistory) > 0 {
 		levenshtein, ok := Cryptografi.Levanshtain(searchHistory, query.Query)
 		if ok {
 			return true, levenshtein, email, nil

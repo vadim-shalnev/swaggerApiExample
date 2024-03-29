@@ -6,14 +6,14 @@ import (
 	"github.com/go-chi/jwtauth/v5"
 	"github.com/golang-jwt/jwt/v5"
 	mod "github.com/vadim-shalnev/swaggerApiExample/Models"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/Auth/authRepository"
 	"github.com/vadim-shalnev/swaggerApiExample/internal/Cryptografi"
-	repository "github.com/vadim-shalnev/swaggerApiExample/internal/Repository"
 	"log"
 	"strings"
 	"time"
 )
 
-func NewAuthService(repository repository.Repository) *Authservice {
+func NewAuthService(repository authRepository.AuthRepository) *Authservice {
 	return &Authservice{repo: repository}
 }
 

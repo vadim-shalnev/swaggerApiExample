@@ -4,16 +4,17 @@ import (
 	"database/sql"
 	_ "github.com/lib/pq"
 	"github.com/vadim-shalnev/swaggerApiExample/internal/Auth/authController"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/Auth/authRepository"
 	"github.com/vadim-shalnev/swaggerApiExample/internal/Auth/authService"
 	"github.com/vadim-shalnev/swaggerApiExample/internal/Geocoder/geocodController"
 	"github.com/vadim-shalnev/swaggerApiExample/internal/Geocoder/geocodService"
-	repository "github.com/vadim-shalnev/swaggerApiExample/internal/Repository"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/Geocoder/geocodeRepository"
 	"github.com/vadim-shalnev/swaggerApiExample/internal/Router"
 	"github.com/vadim-shalnev/swaggerApiExample/internal/User/userController"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/User/userRepository"
 	"github.com/vadim-shalnev/swaggerApiExample/internal/User/userService"
 	"log"
 	"net/http"
-	"time"
 )
 
 // @title Swagger Example API
@@ -26,9 +27,15 @@ import (
 // @in header
 // @name Authorization
 func main() {
-	// добавил задержку т.к. постгрес в контейнере шалил и не хотел запускаться
-	time.Sleep(time.Second * 5)
-	db, err := sql.Open("postgres", "host=db port=5432 User=postgresuser password=userpassword dbname=postgres sslmode=disable")
+	/*
+		db, err := sql.Open("postgres", "host=db port=5432 User=postgresuser password=userpassword dbname=postgres sslmode=disable")
+		if err != nil {
+			log.Fatal("Failed to connect to database:", err)
+		}
+		defer db.Close()
+
+	*/
+	db, err := sql.Open("postgres", "host=localhost port=5432 user=vubuntu password=qwerty dbname=vubuntu sslmode=disable")
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)
 	}
@@ -36,10 +43,12 @@ func main() {
 
 	createTablesIfNotExist(db)
 
-	repo := repository.NewRepositoryImpl(db)
-	servauth := authService.NewAuthService(repo)
-	serveuser := userService.NewAuthService(repo)
-	servegeocode := geocodService.NewgeocodeService(repo, servauth)
+	repoauth := authRepository.NewAuthrepository(db)
+	repouser := userRepository.NewUserRepository(db)
+	repogeo := geocodeRepository.NewGeocodeRepository(db)
+	servauth := authService.NewAuthService(repoauth)
+	serveuser := userService.NewAuthService(repouser)
+	servegeocode := geocodService.NewgeocodeService(repogeo, servauth)
 	cAuth := authController.NewAuthController(servauth)
 	cUser := userController.NewUserController(serveuser)
 	cGeo := geocodController.NewGeocodController(servegeocode)

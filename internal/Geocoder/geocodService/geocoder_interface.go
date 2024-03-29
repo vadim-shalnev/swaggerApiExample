@@ -5,11 +5,11 @@ import (
 	"github.com/ekomobile/dadata/v2/api/model"
 	mod "github.com/vadim-shalnev/swaggerApiExample/Models"
 	"github.com/vadim-shalnev/swaggerApiExample/internal/Auth/authService"
-	repository "github.com/vadim-shalnev/swaggerApiExample/internal/Repository"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/Geocoder/geocodeRepository"
 )
 
 type Geocodeworker struct {
-	repo repository.Repository
+	repo geocodeRepository.GeocodeRepository
 	auth authService.AuthService
 }
 

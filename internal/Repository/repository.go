@@ -1,13 +1,6 @@
 package Repository
 
-import (
-	"context"
-	"database/sql"
-	"errors"
-	"github.com/vadim-shalnev/swaggerApiExample/Models"
-	"log"
-)
-
+/*
 type RepositoryDB struct {
 	DB *sql.DB
 }
@@ -191,3 +184,5 @@ func (r *RepositoryDB) List(ctx context.Context) ([]Models.User, error) {
 
 	return users, nil
 }
+
+*/

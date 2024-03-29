@@ -29,7 +29,7 @@ type RequestQuery struct {
 func main() {
 	// регистрируемся в сервисе и проверяем 'endpoints User
 	client := &http.Client{}
-	newUser := NewUserRequest{Email: "user149", Password: "124", Role: "User"}
+	newUser := NewUserRequest{Email: "user204", Password: "124", Role: "User"}
 	userJSON, err := json.Marshal(newUser)
 	if err != nil {
 		fmt.Println(err)
@@ -101,7 +101,7 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	//fmt.Println("get User body:", string(bodyByte))
+	fmt.Println("get User body:", string(bodyByte))
 	err = json.Unmarshal(bodyByte, &loginInfo)
 	if err != nil {
 		fmt.Println(err)

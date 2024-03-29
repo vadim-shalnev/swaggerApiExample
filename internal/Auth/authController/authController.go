@@ -7,6 +7,7 @@ import (
 	"github.com/vadim-shalnev/swaggerApiExample/internal/Auth/authService"
 	responder "github.com/vadim-shalnev/swaggerApiExample/internal/Responder"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strings"
 )
@@ -88,6 +89,7 @@ func (c *Authcontroller) AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		Usertoken := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
 		_, _, token := c.Auth.VerifyToken(Usertoken)
+		log.Println("midleware")
 		if !token {
 			w.WriteHeader(http.StatusUnauthorized)
 			return

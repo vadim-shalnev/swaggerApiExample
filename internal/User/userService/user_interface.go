@@ -3,11 +3,11 @@ package userService
 import (
 	"context"
 	mod "github.com/vadim-shalnev/swaggerApiExample/Models"
-	repository "github.com/vadim-shalnev/swaggerApiExample/internal/Repository"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/User/userRepository"
 )
 
 type Userservice struct {
-	repo repository.Repository
+	repo userRepository.UserRepository
 }
 
 type UserService interface {
