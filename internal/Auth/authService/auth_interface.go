@@ -1,20 +1,39 @@
 package authService
 
 import (
-	"context"
 	mod "github.com/vadim-shalnev/swaggerApiExample/Models"
 	"github.com/vadim-shalnev/swaggerApiExample/internal/Auth/authRepository"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/middleware"
 )
 
 type Authservice struct {
-	repo authRepository.AuthRepository
+	Repo         authRepository.AuthRepository
+	Tokenmanager middleware.TokenManager
 }
 
 type AuthService interface {
-	Register(ctx context.Context, regData mod.NewUserRequest) (mod.NewUserResponse, error)
-	Login(ctx context.Context, loginData mod.NewUserRequest) (mod.NewUserResponse, error)
-	UserInfoChecker(ctx context.Context, email, password, token string) (bool, bool, bool)
-	TokenGenerate(ctx context.Context, email, password string) (string, error)
-	VerifyToken(tokenString string) (string, string, bool)
-	RefreshToken(ctx context.Context, email, password string) string
+	Register(regData mod.NewUserRequest) (string, error)
+	Login(loginData mod.NewUserRequest) (string, error)
+	Logout() (string, error)
+	UserInfoChecker(email, password string) (bool, bool)
+}
+
+type Facade struct {
+	AuthService *Authservice
+}
+
+func NewAuthFacade(auth *Authservice) *Facade {
+	return &Facade{AuthService: auth}
+}
+func (f Facade) Register(regData mod.NewUserRequest) (string, error) {
+	return f.AuthService.Register(regData)
+}
+func (f Facade) Login(loginData mod.NewUserRequest) (string, error) {
+	return f.AuthService.Login(loginData)
+}
+func (f Facade) Logout() (string, error) {
+	return f.AuthService.Logout()
+}
+func (f Facade) UserInfoChecker(email, password string) (bool, bool) {
+	return f.AuthService.UserInfoChecker(email, password)
 }

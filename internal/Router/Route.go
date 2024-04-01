@@ -3,28 +3,26 @@ package Router
 import (
 	"github.com/go-chi/chi/v5"
 	httpSwagger "github.com/swaggo/http-swagger"
+	"github.com/vadim-shalnev/swaggerApiExample/Models/controller"
 	_ "github.com/vadim-shalnev/swaggerApiExample/docs"
-	"github.com/vadim-shalnev/swaggerApiExample/internal/Auth/authController"
-	"github.com/vadim-shalnev/swaggerApiExample/internal/Geocoder/geocodController"
-	"github.com/vadim-shalnev/swaggerApiExample/internal/User/userController"
 	"net/http"
 )
 
-func New_router(controllerAuth *authController.Authcontroller, controllerUser *userController.Usercontroller, controllerGeocode *geocodController.Geocodcontroller) http.Handler {
+func New_router(controllers controller.Controllers) http.Handler {
 	r := chi.NewRouter()
-	controller := controllerAuth
-	r.Post("/api/register", controller.Register)
-	r.Post("/api/login", controller.Login)
+	md := controllers.Auth.Auth.AuthService.Tokenmanager
+	r.Post("/api/register", controllers.Auth.Register)
+	r.Post("/api/login", controllers.Auth.Login)
 	r.Route("/api/user", func(r chi.Router) {
-		r.Use(controller.AuthMiddleware)
-		r.Get("/get/{id}", controllerUser.GetUser)
-		r.Get("/list/", controllerUser.ListUsers)
-		r.Delete("/del/{id}", controllerUser.DelUser)
+		r.Use(md.AuthMiddleware)
+		r.Get("/get/{id}", controllers.User.GetUser)
+		r.Get("/list/", controllers.User.ListUsers)
+		r.Delete("/del/{id}", controllers.User.DelUser)
 	})
 	r.Route("/api/address", func(r chi.Router) {
-		r.Use(controller.AuthMiddleware)
-		r.Post("/search", controllerGeocode.HandleSearch)
-		r.Post("/geocode", controllerGeocode.HandleGeo)
+		r.Use(md.AuthMiddleware)
+		r.Post("/search", controllers.Geo.HandleSearch)
+		r.Post("/geocode", controllers.Geo.HandleGeo)
 	})
 	r.Get("/swagger/*", httpSwagger.Handler(
 		httpSwagger.URL("http://localhost:8080/swagger/doc.json"),

@@ -14,16 +14,18 @@ import (
 	"log"
 )
 
+/*
 const (
 	ApiKey    = "22d3fa86b8743e497b32195cbc690abc06b42436"
 	SecretKey = "adf07bdd63b240ae60087efd2e72269b9c65cc91"
 )
+*/
 
-func NewgeocodeService(repository geocodeRepository.GeocodeRepository, aothorisation authService.AuthService) *Geocodeworker {
-	return &Geocodeworker{repo: repository, auth: aothorisation}
+func NewgeocodeService(repository geocodeRepository.GeocodeRepository, aothorisation authService.AuthService) *Geocodeservice {
+	return &Geocodeservice{repo: repository, auth: aothorisation}
 }
 
-func (d *Geocodeworker) Search(ctx context.Context, userRequest mod.RequestQuery) (mod.RequestQuery, error) {
+func (d *Geocodeservice) Search(ctx context.Context, userRequest mod.RequestQuery) (mod.RequestQuery, error) {
 	var responseQuery mod.RequestQuery
 	resp, err := d.HandleWorker(ctx, userRequest)
 	if err != nil {
@@ -34,7 +36,7 @@ func (d *Geocodeworker) Search(ctx context.Context, userRequest mod.RequestQuery
 	return responseQuery, nil
 }
 
-func (d *Geocodeworker) Address(ctx context.Context, userRequest mod.RequestQuery) (mod.RequestQuery, error) {
+func (d *Geocodeservice) Address(ctx context.Context, userRequest mod.RequestQuery) (mod.RequestQuery, error) {
 	var responseQuery mod.RequestQuery
 	resp, err := d.HandleWorker(ctx, userRequest)
 	if err != nil {
@@ -45,7 +47,7 @@ func (d *Geocodeworker) Address(ctx context.Context, userRequest mod.RequestQuer
 	return responseQuery, nil
 }
 
-func (d *Geocodeworker) HandleWorker(ctx context.Context, query mod.RequestQuery) (mod.RequestAddress, error) {
+func (d *Geocodeservice) HandleWorker(ctx context.Context, query mod.RequestQuery) (mod.RequestAddress, error) {
 	var requestQuery mod.RequestAddress
 	ok, cache, email, err := d.CacheChecker(ctx, query, 5)
 	if err != nil {
@@ -76,7 +78,7 @@ func (d *Geocodeworker) HandleWorker(ctx context.Context, query mod.RequestQuery
 }
 
 // Левенштейн для кэша
-func (d *Geocodeworker) CacheChecker(ctx context.Context, query mod.RequestQuery, ttl int) (bool, mod.RequestAddress, string, error) {
+func (d *Geocodeservice) CacheChecker(ctx context.Context, query mod.RequestQuery, ttl int) (bool, mod.RequestAddress, string, error) {
 	userToken := ctx.Value("jwt_token").(string)
 	email, _, _ := d.auth.VerifyToken(userToken)
 	// идем в репо за последними запросами
@@ -93,7 +95,7 @@ func (d *Geocodeworker) CacheChecker(ctx context.Context, query mod.RequestQuery
 	return false, mod.RequestAddress{}, email, nil
 }
 
-func (d *Geocodeworker) Geocode(query mod.RequestQuery) ([]*model.Address, error) {
+func (d *Geocodeservice) Geocode(query mod.RequestQuery) ([]*model.Address, error) {
 	creds := client.Credentials{
 		ApiKeyValue:    ApiKey,
 		SecretKeyValue: SecretKey,

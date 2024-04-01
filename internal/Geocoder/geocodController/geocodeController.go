@@ -6,13 +6,12 @@ import (
 	"github.com/vadim-shalnev/swaggerApiExample/Models"
 	"github.com/vadim-shalnev/swaggerApiExample/internal/Geocoder/geocodService"
 	responder "github.com/vadim-shalnev/swaggerApiExample/internal/Responder"
-	"io/ioutil"
 	"net/http"
 	"strings"
 )
 
 type Geocodcontroller struct {
-	Geocoder geocodService.GeocodeWorker
+	Geocoder geocodService.GeocodeService
 }
 
 type Geocoder interface {
@@ -20,7 +19,7 @@ type Geocoder interface {
 	HandleGeo(w http.ResponseWriter, r *http.Request)
 }
 
-func NewGeocodController(geocoder geocodService.GeocodeWorker) *Geocodcontroller {
+func NewGeocodController(geocoder geocodService.GeocodeService) *Geocodcontroller {
 	return &Geocodcontroller{Geocoder: geocoder}
 }
 
@@ -36,20 +35,13 @@ func NewGeocodController(geocoder geocodService.GeocodeWorker) *Geocodcontroller
 func (c *Geocodcontroller) HandleSearch(w http.ResponseWriter, r *http.Request) {
 	Usertoken := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
 	ctx := context.WithValue(r.Context(), "jwt_token", Usertoken)
-	bodyJSON, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		responder.HandleError(w, err)
-		return
-	}
 
 	var searchRequest Models.RequestQuery
-
-	err = json.Unmarshal(bodyJSON, &searchRequest)
+	err := json.NewDecoder(r.Body).Decode(&searchRequest)
 	if err != nil {
 		responder.HandleError(w, err)
 		return
 	}
-
 	respSearch, err := c.Geocoder.Search(ctx, searchRequest)
 	if err != nil {
 		responder.HandleError(w, err)
@@ -70,15 +62,9 @@ func (c *Geocodcontroller) HandleSearch(w http.ResponseWriter, r *http.Request) 
 func (c *Geocodcontroller) HandleGeo(w http.ResponseWriter, r *http.Request) {
 	Usertoken := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
 	ctx := context.WithValue(r.Context(), "jwt_token", Usertoken)
-	bodyJSON, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		responder.HandleError(w, err)
-		return
-	}
 
 	var searchRequest Models.RequestQuery
-
-	err = json.Unmarshal(bodyJSON, &searchRequest)
+	err := json.NewDecoder(r.Body).Decode(&searchRequest)
 	if err != nil {
 		responder.HandleError(w, err)
 		return
