@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	mod "github.com/vadim-shalnev/swaggerApiExample/Models"
 	"github.com/vadim-shalnev/swaggerApiExample/internal/Auth/authService"
-	responder "github.com/vadim-shalnev/swaggerApiExample/internal/Responder"
+	responder "github.com/vadim-shalnev/swaggerApiExample/internal/infrastructures/Responder"
 	"net/http"
 )
 
@@ -17,7 +17,7 @@ type AuthController interface {
 	Login(w http.ResponseWriter, r *http.Request)
 }
 
-func NewAuthController(auth authService.Facade) *Authcontroller {
+func NewAuthController(auth authService.Facade, responder Responder.Responder) *Authcontroller {
 	return &Authcontroller{Auth: auth}
 }
 

@@ -7,7 +7,17 @@ import (
 	"log"
 )
 
-func HashPassword(user Models.NewUserRequest) (Models.NewUserRequest, error) {
+type Hash struct {
+}
+type Hasher interface {
+	HashPassword(user Models.NewUserRequest) (Models.NewUserRequest, error)
+	CheckPassword(hashedPassword string, password string) error
+}
+
+func NewHasher() *Hash {
+	return &Hash{}
+}
+func (h *Hash) HashPassword(user Models.NewUserRequest) (Models.NewUserRequest, error) {
 	password := user.Password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
@@ -16,7 +26,7 @@ func HashPassword(user Models.NewUserRequest) (Models.NewUserRequest, error) {
 	user.Password = string(hashedPassword)
 	return user, nil
 }
-func CheckPassword(hashedPassword string, password string) error {
+func (h *Hash) CheckPassword(hashedPassword string, password string) error {
 	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 	if err != nil {
 		log.Println("Неверный пароль", hashedPassword, password)

@@ -8,10 +8,11 @@ import (
 	"github.com/ekomobile/dadata/v2/api/model"
 	"github.com/ekomobile/dadata/v2/client"
 	mod "github.com/vadim-shalnev/swaggerApiExample/Models"
-	"github.com/vadim-shalnev/swaggerApiExample/internal/Auth/authService"
-	"github.com/vadim-shalnev/swaggerApiExample/internal/Cryptografi"
-	"github.com/vadim-shalnev/swaggerApiExample/internal/Geocoder/geocodeRepository"
+	"github.com/vadim-shalnev/swaggerApiExample/config"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/Geo/geocodeRepository"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/infrastructures/middleware"
 	"log"
+	"time"
 )
 
 /*
@@ -21,8 +22,8 @@ const (
 )
 */
 
-func NewgeocodeService(repository geocodeRepository.GeocodeRepository, aothorisation authService.AuthService) *Geocodeservice {
-	return &Geocodeservice{repo: repository, auth: aothorisation}
+func NewgeocodeService(repository geocodeRepository.GeocodeRepository, Tokenmanager middleware.TokenManager, conf config.AppConf) *Geocodeservice {
+	return &Geocodeservice{repo: repository, Tokenmanager: Tokenmanager, Config: conf}
 }
 
 func (d *Geocodeservice) Search(ctx context.Context, userRequest mod.RequestQuery) (mod.RequestQuery, error) {
@@ -49,15 +50,17 @@ func (d *Geocodeservice) Address(ctx context.Context, userRequest mod.RequestQue
 
 func (d *Geocodeservice) HandleWorker(ctx context.Context, query mod.RequestQuery) (mod.RequestAddress, error) {
 	var requestQuery mod.RequestAddress
-	ok, cache, email, err := d.CacheChecker(ctx, query, 5)
+	userToken := ctx.Value("jwt_token").(string)
+	claims, err := d.Tokenmanager.GetClaims(userToken)
 	if err != nil {
-		log.Println("ошибка проверки кэша", err)
+		return mod.RequestAddress{}, err
 	}
-	if ok {
-		requestQuery.Addres = cache.Addres
-		requestQuery.RequestSearch.Lat = cache.RequestSearch.Lat
-		requestQuery.RequestSearch.Lng = cache.RequestSearch.Lng
-		return requestQuery, nil
+	email := claims["Email"].(string)
+	timeout, cancel := context.WithTimeout(ctx, time.Duration(500)*time.Millisecond)
+	defer cancel()
+	cache, err := d.repo.CacheChecker(timeout, query)
+	if err == nil {
+		return cache, nil
 	}
 
 	geocodeResponse, err := d.Geocode(query)
@@ -77,11 +80,7 @@ func (d *Geocodeservice) HandleWorker(ctx context.Context, query mod.RequestQuer
 	return requestQuery, nil
 }
 
-// Левенштейн для кэша
-func (d *Geocodeservice) CacheChecker(ctx context.Context, query mod.RequestQuery, ttl int) (bool, mod.RequestAddress, string, error) {
-	userToken := ctx.Value("jwt_token").(string)
-	email, _, _ := d.auth.VerifyToken(userToken)
-	// идем в репо за последними запросами
+/*
 	searchHistory, err := d.repo.CacheChecker(ctx, email, ttl)
 	if err != nil {
 		return false, mod.RequestAddress{}, "", err
@@ -93,12 +92,13 @@ func (d *Geocodeservice) CacheChecker(ctx context.Context, query mod.RequestQuer
 		}
 	}
 	return false, mod.RequestAddress{}, email, nil
-}
+
+*/
 
 func (d *Geocodeservice) Geocode(query mod.RequestQuery) ([]*model.Address, error) {
 	creds := client.Credentials{
-		ApiKeyValue:    ApiKey,
-		SecretKeyValue: SecretKey,
+		ApiKeyValue:    d.Config.GEO.APIKey,
+		SecretKeyValue: d.Config.GEO.GEOKey,
 	}
 	api := dadata.NewCleanApi(client.WithCredentialProvider(&creds))
 	result, err := api.Address(context.Background(), query.Query)

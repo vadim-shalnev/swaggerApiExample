@@ -4,11 +4,12 @@ import (
 	"context"
 	"database/sql"
 	"github.com/vadim-shalnev/swaggerApiExample/Models"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/infrastructures/Cache"
 	"log"
 )
 
-func NewGeocodeRepository(db *sql.DB) *Geocoderepository {
-	return &Geocoderepository{DB: db}
+func NewGeocodeRepository(db *sql.DB, cache Cache.Cache) *Geocoderepository {
+	return &Geocoderepository{DB: db, Cache: cache}
 }
 func (r *Geocoderepository) GetByEmail(ctx context.Context, email string) (Models.User, error) {
 	var user Models.User
@@ -30,55 +31,13 @@ func (r *Geocoderepository) GetByEmail(ctx context.Context, email string) (Model
 	return user, nil
 }
 
-func (r *Geocoderepository) CacheChecker(ctx context.Context, email string, historyCount int) ([]Models.SearchHistory, error) {
-	// ходим в базу поисковых запросов и базу ответов дадата
-	tx, err := r.DB.BeginTx(ctx, nil)
+func (r *Geocoderepository) CacheChecker(ctx context.Context, query Models.RequestQuery) (Models.RequestAddress, error) {
+	var cache Models.RequestAddress
+	err := r.Cache.Get(ctx, query.Query, &cache)
 	if err != nil {
-		return []Models.SearchHistory{}, err
+		return Models.RequestAddress{}, err
 	}
-	defer tx.Rollback()
-	// получаем id пользователя из базы данных
-	user, err := r.GetByEmail(ctx, email)
-	if err != nil {
-		return []Models.SearchHistory{}, err
-	}
-	userID := user.ID
-	// получаем последние n поисковых запросов из базы данных
-	query := `
-        SELECT q.id, q.query, r.address, r.lng, r.lat
-        FROM qwery_history q
-        LEFT JOIN response_history r ON q.id = r.qwery_key
-        WHERE q.user_key = $1
-        ORDER BY q.created_at DESC
-        LIMIT $2
-    `
-	rows, err := tx.QueryContext(ctx, query, userID, historyCount)
-	if err != nil {
-		log.Println("Error querying search history:", err)
-		return []Models.SearchHistory{}, err
-	}
-	defer rows.Close()
-
-	// Сбор результатов
-	var searchHistories []Models.SearchHistory
-	for rows.Next() {
-		var sh Models.SearchHistory
-		err := rows.Scan(&sh.ID, &sh.Query, &sh.Address, &sh.Lng, &sh.Lat)
-		if err != nil {
-			log.Println("Error scanning search history:", err)
-			return []Models.SearchHistory{}, err
-		}
-		searchHistories = append(searchHistories, sh)
-	}
-
-	// Подтверждение транзакции
-	err = tx.Commit()
-	if err != nil {
-		log.Println("Error committing transaction:", err)
-		return []Models.SearchHistory{}, err
-	}
-
-	return searchHistories, nil
+	return cache, nil
 }
 
 func (r *Geocoderepository) Insert(ctx context.Context, email string, query Models.RequestQuery, requestQuery Models.RequestAddress) error {

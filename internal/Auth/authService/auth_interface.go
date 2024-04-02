@@ -3,12 +3,14 @@ package authService
 import (
 	mod "github.com/vadim-shalnev/swaggerApiExample/Models"
 	"github.com/vadim-shalnev/swaggerApiExample/internal/Auth/authRepository"
-	"github.com/vadim-shalnev/swaggerApiExample/internal/middleware"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/infrastructures/Cryptografi"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/infrastructures/middleware"
 )
 
 type Authservice struct {
 	Repo         authRepository.AuthRepository
 	Tokenmanager middleware.TokenManager
+	Hash         Cryptografi.Hasher
 }
 
 type AuthService interface {

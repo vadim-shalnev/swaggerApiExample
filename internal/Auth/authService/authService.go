@@ -4,14 +4,14 @@ import (
 	"errors"
 	mod "github.com/vadim-shalnev/swaggerApiExample/Models"
 	"github.com/vadim-shalnev/swaggerApiExample/internal/Auth/authRepository"
-	"github.com/vadim-shalnev/swaggerApiExample/internal/Cryptografi"
-	"github.com/vadim-shalnev/swaggerApiExample/internal/middleware"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/infrastructures/Cryptografi"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/infrastructures/middleware"
 	"log"
 	"strings"
 )
 
-func NewAuthService(repository authRepository.AuthRepository, md middleware.TokenManager) *Authservice {
-	return &Authservice{Repo: repository, Tokenmanager: md}
+func NewAuthService(repository authRepository.AuthRepository, md middleware.TokenManager, hash Cryptografi.Hasher) *Authservice {
+	return &Authservice{Repo: repository, Tokenmanager: md, Hash: hash}
 }
 
 func (f *Authservice) Register(regData mod.NewUserRequest) (string, error) {
@@ -20,7 +20,7 @@ func (f *Authservice) Register(regData mod.NewUserRequest) (string, error) {
 		return "", err
 	}
 	// Хэшируем пароль и добавляем его в запрос к БД
-	hashPass, err := Cryptografi.HashPassword(regData)
+	hashPass, err := f.Hash.HashPassword(regData)
 	if err != nil {
 		return "", errors.New("failed to hash password")
 	}
@@ -50,7 +50,7 @@ func (f *Authservice) UserInfoChecker(email, password string) (bool, bool) {
 	if strings.TrimSpace(user.Email) != strings.TrimSpace(email) {
 		return false, false
 	}
-	if err := Cryptografi.CheckPassword(user.Password, password); err != nil {
+	if err := f.Hash.CheckPassword(user.Password, password); err != nil {
 		log.Println("check pass is false")
 		return false, false
 	}

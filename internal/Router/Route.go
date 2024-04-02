@@ -3,14 +3,15 @@ package Router
 import (
 	"github.com/go-chi/chi/v5"
 	httpSwagger "github.com/swaggo/http-swagger"
-	"github.com/vadim-shalnev/swaggerApiExample/Models/controller"
 	_ "github.com/vadim-shalnev/swaggerApiExample/docs"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/Modules"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/infrastructures/components"
 	"net/http"
 )
 
-func New_router(controllers controller.Controllers) http.Handler {
+func New_router(controllers *Modules.Controllers, component *components.Components) http.Handler {
 	r := chi.NewRouter()
-	md := controllers.Auth.Auth.AuthService.Tokenmanager
+	md := component.TokenManager
 	r.Post("/api/register", controllers.Auth.Register)
 	r.Post("/api/login", controllers.Auth.Login)
 	r.Route("/api/user", func(r chi.Router) {

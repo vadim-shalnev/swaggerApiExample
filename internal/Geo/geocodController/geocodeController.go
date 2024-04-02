@@ -4,14 +4,16 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/vadim-shalnev/swaggerApiExample/Models"
-	"github.com/vadim-shalnev/swaggerApiExample/internal/Geocoder/geocodService"
-	responder "github.com/vadim-shalnev/swaggerApiExample/internal/Responder"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/Geo/geocodService"
+	responder "github.com/vadim-shalnev/swaggerApiExample/internal/infrastructures/Responder"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/infrastructures/components"
 	"net/http"
 	"strings"
 )
 
 type Geocodcontroller struct {
-	Geocoder geocodService.GeocodeService
+	Geocoder  geocodService.GeocodeService
+	responder Responder.Responder
 }
 
 type Geocoder interface {
@@ -19,7 +21,7 @@ type Geocoder interface {
 	HandleGeo(w http.ResponseWriter, r *http.Request)
 }
 
-func NewGeocodController(geocoder geocodService.GeocodeService) *Geocodcontroller {
+func NewGeocodController(geocoder geocodService.GeocodeService, components *components.Components) *Geocodcontroller {
 	return &Geocodcontroller{Geocoder: geocoder}
 }
 

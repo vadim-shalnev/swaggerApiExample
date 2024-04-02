@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-func NewAuthService(repository userRepository.UserRepository) *Userservice {
+func NewUserService(repository userRepository.UserRepository) *Userservice {
 	return &Userservice{repo: repository}
 }
 

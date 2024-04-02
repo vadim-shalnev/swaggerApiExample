@@ -5,7 +5,35 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="79509455-0791-4ce8-ac74-35d8481e82e3" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/Modules/Controllers.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/Modules/Services.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/Modules/Storages.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/infrastructures/Cache/Redis.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/infrastructures/components/components.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/infrastructures/logs/logger.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/run/app.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/controller/Controllers.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/dbinit.go" beforeDir="false" afterPath="$PROJECT_DIR$/run/dbinit.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/config.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Auth/authController/authController.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Auth/authController/authController.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Auth/authService/authService.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Auth/authService/authService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Auth/authService/auth_interface.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Auth/authService/auth_interface.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Cryptografi/Cryptografi.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/infrastructures/Cryptografi/Cryptografi.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Geocoder/geocodController/geocodeController.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Geo/geocodController/geocodeController.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Geocoder/geocodService/geocodService.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Geo/geocodService/geocodService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Geocoder/geocodService/geocoder_interface.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Geo/geocodService/geocoder_interface.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Geocoder/geocodeRepository/geocodeRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Geo/geocodeRepository/geocodeRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Geocoder/geocodeRepository/geocode_interface.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Geo/geocodeRepository/geocode_interface.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Responder/respond.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/infrastructures/Responder/respond.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/Router/Route.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/Router/Route.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/User/userController/userController.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/User/userController/userController.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/User/userService/userService.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/User/userService/userService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/middleware/token.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/infrastructures/middleware/token.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,7 +88,7 @@
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
     &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/vubuntu/PetStore&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/vubuntu/swaggerApiExample&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
@@ -70,11 +98,11 @@
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/run" />
+      <recent name="$PROJECT_DIR$/internal/infrastructures" />
       <recent name="$PROJECT_DIR$/internal/geocoder" />
       <recent name="$PROJECT_DIR$/internal/user" />
       <recent name="$PROJECT_DIR$/internal/auth" />
-      <recent name="$PROJECT_DIR$" />
-      <recent name="$PROJECT_DIR$/Clean_Architecture/internal" />
     </key>
   </component>
   <component name="RunManager" selected="Go Build.go build github.com/vadim-shalnev/swaggerApiExample/client">

@@ -1,11 +1,22 @@
-package main
+package run
 
 import (
 	"database/sql"
+	"fmt"
+	"github.com/vadim-shalnev/swaggerApiExample/config"
 	"log"
+	"time"
 )
 
-func createTablesIfNotExist(db *sql.DB) {
+func (a *App) ConnectionDB(conf config.AppConf) *sql.DB {
+	time.Sleep(time.Second * 2)
+	connect, err := sql.Open("postgres", fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", conf.DB.Host, conf.DB.Port, conf.DB.User, conf.DB.Password, conf.DB.Name))
+	if err != nil {
+		log.Fatal("Failed to connect to database:", err)
+	}
+	return connect
+}
+func (a *App) CreateTablesIfNotExist(db *sql.DB) {
 	createUsersTable := `
 CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
@@ -69,4 +80,5 @@ CREATE TABLE IF NOT EXISTS response_history (
 	}
 
 	log.Println("Tables created successfully")
+
 }

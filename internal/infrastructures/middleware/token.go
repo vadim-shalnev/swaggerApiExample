@@ -18,6 +18,7 @@ type TokenManager interface {
 	TokenGenerate(email, password string) (string, error)
 	VerifyToken(tokenString string) bool
 	RefreshToken(email, password string) string
+	GetClaims(tokenString string) (jwt.MapClaims, error)
 	AuthMiddleware(next http.Handler) http.Handler
 }
 
@@ -70,6 +71,19 @@ func (s *Tokenmanager) RefreshToken(email, password string) string {
 	}
 
 	return tokenString
+}
+
+func (s *Tokenmanager) GetClaims(tokenString string) (jwt.MapClaims, error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		return []byte(s.SecretKey), nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		return claims, nil
+	}
+	return nil, errors.New("invalid token")
 }
 
 func (s *Tokenmanager) AuthMiddleware(next http.Handler) http.Handler {

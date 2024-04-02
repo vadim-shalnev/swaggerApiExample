@@ -3,9 +3,10 @@ package config
 import "os"
 
 type AppConf struct {
-	DB  DB     `yaml:"db"`
-	MD  string `yaml:"md"`
-	GEO Geo    `yaml:"geo"`
+	DB    DB     `yaml:"db"`
+	MD    string `yaml:"md"`
+	GEO   Geo    `yaml:"geo"`
+	Cache Cache  `yaml:"cache"`
 }
 type DB struct {
 	Net      string `yaml:"net"`
@@ -20,6 +21,11 @@ type DB struct {
 type Geo struct {
 	APIKey string `yaml:"api_key"`
 	GEOKey string `yaml:"geo_key"`
+}
+type Cache struct {
+	Address  string `yaml:"address"`
+	Password string `yaml:"password"`
+	Port     string `yaml:"port"`
 }
 
 func NewAppConf() AppConf {
@@ -37,6 +43,11 @@ func NewAppConf() AppConf {
 		Geo{
 			APIKey: os.Getenv("API_KEY"),
 			GEOKey: os.Getenv("GEO_KEY"),
+		},
+		Cache{
+			Address:  os.Getenv("CACHE_ADDRESS"),
+			Password: os.Getenv("CACHE_PASSWORD"),
+			Port:     os.Getenv("CACHE_PORT"),
 		},
 	}
 }
