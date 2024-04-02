@@ -9,12 +9,24 @@ services:
   db:
     image: postgres
     environment:
-      POSTGRES_DB: postgres
-      POSTGRES_USER: postgresuser
-      POSTGRES_PASSWORD: userpassword
+      - POSTGRES_DB=${DB_DRIVER}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
     ports:
       - "5435:5432"
     volumes:
       - dbdata:/var/lib/Vad_postgresql/data
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - /path/to/local/dаta:/root/redis
+      - /path/to/local/redis.conf:/usr/local/etc/redis/redis.conf
+    environment:
+      - REDIS_PASSWORD=my-password
+      - REDIS_PORT=6379
+      - REDIS_DATABASES=16
 volumes:
   dbdata:
