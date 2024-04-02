@@ -4,21 +4,23 @@ import (
 	"encoding/json"
 	mod "github.com/vadim-shalnev/swaggerApiExample/Models"
 	"github.com/vadim-shalnev/swaggerApiExample/internal/Auth/authService"
-	responder "github.com/vadim-shalnev/swaggerApiExample/internal/infrastructures/Responder"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/infrastructures/Responder"
 	"net/http"
 )
 
 type Authcontroller struct {
-	Auth authService.Facade
+	Auth      authService.AuthService
+	responder Responder.Responder
 }
 
 type AuthController interface {
 	Register(w http.ResponseWriter, r *http.Request)
 	Login(w http.ResponseWriter, r *http.Request)
+	Logout(w http.ResponseWriter, r *http.Request)
 }
 
-func NewAuthController(auth authService.Facade, responder Responder.Responder) *Authcontroller {
-	return &Authcontroller{Auth: auth}
+func NewAuthController(auth authService.AuthService, responder Responder.Responder) *Authcontroller {
+	return &Authcontroller{Auth: auth, responder: responder}
 }
 
 // Register @Summary Регистрация нового пользователя
@@ -33,15 +35,15 @@ func (c *Authcontroller) Register(w http.ResponseWriter, r *http.Request) {
 	var regData mod.NewUserRequest
 	err := json.NewDecoder(r.Body).Decode(&regData)
 	if err != nil {
-		responder.HandleError(w, err)
+		c.responder.HandleError(w, err)
 		return
 	}
 	token, err := c.Auth.Register(regData)
 	if err != nil {
-		responder.HandleError(w, err)
+		c.responder.HandleError(w, err)
 		return
 	}
-	responder.SendJSONResponse(w, token)
+	c.responder.SendJSONResponse(w, token)
 }
 
 // Login @Summary Вход в систему
@@ -56,22 +58,22 @@ func (c *Authcontroller) Login(w http.ResponseWriter, r *http.Request) {
 	var loginData mod.NewUserRequest
 	err := json.NewDecoder(r.Body).Decode(&loginData)
 	if err != nil {
-		responder.HandleError(w, err)
+		c.responder.HandleError(w, err)
 		return
 	}
 	UserInfo, err := c.Auth.Login(loginData)
 	if err != nil {
-		responder.HandleError(w, err)
+		c.responder.HandleError(w, err)
 		return
 	}
-	responder.SendJSONResponse(w, UserInfo)
+	c.responder.SendJSONResponse(w, UserInfo)
 }
 
 func (c *Authcontroller) Logout(w http.ResponseWriter, r *http.Request) {
 	niltoken, err := c.Auth.Logout()
 	if err != nil {
-		responder.HandleError(w, err)
+		c.responder.HandleError(w, err)
 		return
 	}
-	responder.SendJSONResponse(w, niltoken)
+	c.responder.SendJSONResponse(w, niltoken)
 }

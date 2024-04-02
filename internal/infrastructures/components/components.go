@@ -18,12 +18,13 @@ type Components struct {
 	Responder    Responder.Responder
 }
 
-func NewComponents(conf config.AppConf, tokenManager middleware.TokenManager, hash Cryptografi.Hasher, cache Cache.Cache, responder Responder.Responder) *Components {
+func NewComponents(conf config.AppConf, tokenManager middleware.TokenManager, hash Cryptografi.Hasher, cache Cache.Cache, responder Responder.Responder, logger *zap.Logger) *Components {
 	return &Components{
 		Conf:         conf,
 		TokenManager: tokenManager,
 		Hash:         hash,
 		Cache:        cache,
+		Logger:       logger,
 		Responder:    responder,
 	}
 }

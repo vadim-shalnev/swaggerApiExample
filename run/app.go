@@ -42,7 +42,7 @@ func (a *App) Run(controllers *Modules.Controllers, component *components.Compon
 	signal.Notify(stop, os.Interrupt)
 
 	// Создаем контекст с таймаутом 5 секунд
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
 	defer cancel()
 
 	// Создаем HTTP-сервер
@@ -80,12 +80,11 @@ func (a *App) Boostrap() (*Modules.Controllers, *components.Components) {
 	// Создаем кэш
 	cache := Cache.NewRedisCache(a.Conf.Cache.Address, a.Conf.Cache.Password, a.Logger)
 	// Создаем компоненты для роутера
-	newComponents := components.NewComponents(a.Conf, tokenManager, respondManager, hash, cache)
+	newComponents := components.NewComponents(a.Conf, tokenManager, hash, cache, respondManager, a.Logger)
 	// Подключаемся к PostgreSQL
 	db := a.ConnectionDB(a.Conf)
 	// Создаем таблицы если их нет
 	a.CreateTablesIfNotExist(db)
-	defer db.Close()
 	// Создаем слои
 	repos := Modules.NewStorages(db, cache)
 	services := Modules.NewServices(repos, newComponents)

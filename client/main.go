@@ -29,7 +29,7 @@ type RequestQuery struct {
 func main() {
 	// регистрируемся в сервисе и проверяем 'endpoints User
 	client := &http.Client{}
-	newUser := NewUserRequest{Email: "user5435", Password: "124", Role: "User"}
+	newUser := NewUserRequest{Email: "user54357", Password: "124", Role: "User"}
 	userJSON, err := json.Marshal(newUser)
 	if err != nil {
 		fmt.Println(err)
@@ -49,13 +49,13 @@ func main() {
 		return
 	}
 
-	var reginfo NewUserResponse
-	err = json.Unmarshal(bodyJSON, &reginfo)
+	var token string
+	err = json.Unmarshal(bodyJSON, &token)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println("reginfo", reginfo)
+	fmt.Println("reginfo", token)
 
 	req, err := http.NewRequest("POST", "http://localhost:8080/api/login", bytes.NewReader(userJSON))
 	if err != nil {
@@ -63,7 +63,6 @@ func main() {
 		return
 	}
 
-	token := reginfo.Token.Token
 	req.Header.Set("Authorization", "Bearer "+token)
 
 	resp, err = client.Do(req)
@@ -77,7 +76,7 @@ func main() {
 	}
 	fmt.Println("login body:", string(bodyByte))
 
-	var loginInfo NewUserResponse
+	var loginInfo string
 	err = json.Unmarshal(bodyByte, &loginInfo)
 	if err != nil {
 		fmt.Println(err)
@@ -102,12 +101,13 @@ func main() {
 		return
 	}
 	fmt.Println("get User body:", string(bodyByte))
-	err = json.Unmarshal(bodyByte, &loginInfo)
+	var getUser NewUserResponse
+	err = json.Unmarshal(bodyByte, &getUser)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println("getuserinfo", loginInfo)
+	fmt.Println("getuserinfo", getUser)
 	// Выполняем запросы к геосервису
 	var query RequestQuery
 	query.Query = "Москва лениня 13"
@@ -124,24 +124,26 @@ func main() {
 		return
 	}
 	req.Header.Set("Authorization", "Bearer "+token)
-	resp, err = client.Do(req)
-	if err != nil {
-		fmt.Println(err)
-		return
+	for i := 0; i <= 3; i++ {
+		resp, err = client.Do(req)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		bodyByte, err = ioutil.ReadAll(resp.Body)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		fmt.Println("search body:", string(bodyByte))
+		var dataSearch RequestQuery
+		err = json.Unmarshal(bodyByte, &dataSearch)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		fmt.Println("searchinfo", dataSearch)
 	}
-	bodyByte, err = ioutil.ReadAll(resp.Body)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println("search body:", string(bodyByte))
-	var dataSearch RequestQuery
-	err = json.Unmarshal(bodyByte, &dataSearch)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println("searchinfo", dataSearch)
 	req, err = http.NewRequest("POST", "http://localhost:8080/api/address/geocode", bytes.NewReader(queryJSON))
 	if err != nil {
 		fmt.Println(err)
@@ -166,24 +168,5 @@ func main() {
 		return
 	}
 	fmt.Println("addresinfo", geocodeaddres)
-
-	// Выполняем запрос на удаление к бд
-	req, err = http.NewRequest("DELETE", "http://localhost:8080/api/user/del/15", nil)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	req.Header.Set("Authorization", "Bearer "+token)
-	resp, err = client.Do(req)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	bodyByte, err = ioutil.ReadAll(resp.Body)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println("del is:", string(bodyByte))
 
 }

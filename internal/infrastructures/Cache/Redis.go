@@ -6,6 +6,7 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/vadim-shalnev/swaggerApiExample/Models"
 	"go.uber.org/zap"
+	"log"
 	"time"
 )
 
@@ -23,18 +24,20 @@ func NewRedisCache(address, password string, logger *zap.Logger) *RedisCache {
 	// добавили от себя в redis?
 	//
 	client := redis.NewClient(&redis.Options{
-		Addr:     address,
-		Password: password,
+		Addr:     "localhost:6379",
+		Password: "",
 		// добавляем порт
 		DB: 0, // use default DB
 	})
 	ctx := context.Background()
 
 	_, err := client.Ping(ctx).Result()
-	if err != nil {
-		logger.Error("Error connection to redis", zap.Error(err))
+	if err == nil {
+		log.Println("Redis connected")
+		redisCache := &RedisCache{client: client}
+		return redisCache
 	}
-	return &RedisCache{client: client}
+	return &RedisCache{}
 }
 
 func (r *RedisCache) Get(ctx context.Context, key string, query *Models.RequestAddress) error {

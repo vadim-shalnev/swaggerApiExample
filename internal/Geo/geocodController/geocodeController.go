@@ -5,8 +5,7 @@ import (
 	"encoding/json"
 	"github.com/vadim-shalnev/swaggerApiExample/Models"
 	"github.com/vadim-shalnev/swaggerApiExample/internal/Geo/geocodService"
-	responder "github.com/vadim-shalnev/swaggerApiExample/internal/infrastructures/Responder"
-	"github.com/vadim-shalnev/swaggerApiExample/internal/infrastructures/components"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/infrastructures/Responder"
 	"net/http"
 	"strings"
 )
@@ -21,8 +20,8 @@ type Geocoder interface {
 	HandleGeo(w http.ResponseWriter, r *http.Request)
 }
 
-func NewGeocodController(geocoder geocodService.GeocodeService, components *components.Components) *Geocodcontroller {
-	return &Geocodcontroller{Geocoder: geocoder}
+func NewGeocodController(geocoder geocodService.GeocodeService, responder Responder.Responder) *Geocodcontroller {
+	return &Geocodcontroller{Geocoder: geocoder, responder: responder}
 }
 
 // HandleSearch @Summary Поиск полного адреса
@@ -41,15 +40,15 @@ func (c *Geocodcontroller) HandleSearch(w http.ResponseWriter, r *http.Request) 
 	var searchRequest Models.RequestQuery
 	err := json.NewDecoder(r.Body).Decode(&searchRequest)
 	if err != nil {
-		responder.HandleError(w, err)
+		c.responder.HandleError(w, err)
 		return
 	}
 	respSearch, err := c.Geocoder.Search(ctx, searchRequest)
 	if err != nil {
-		responder.HandleError(w, err)
+		c.responder.HandleError(w, err)
 		return
 	}
-	responder.SendJSONResponse(w, respSearch)
+	c.responder.SendJSONResponse(w, respSearch)
 }
 
 // HandleGeo @Summary Поиск координат по адресу
@@ -68,13 +67,13 @@ func (c *Geocodcontroller) HandleGeo(w http.ResponseWriter, r *http.Request) {
 	var searchRequest Models.RequestQuery
 	err := json.NewDecoder(r.Body).Decode(&searchRequest)
 	if err != nil {
-		responder.HandleError(w, err)
+		c.responder.HandleError(w, err)
 		return
 	}
 	respGeo, err := c.Geocoder.Address(ctx, searchRequest)
 	if err != nil {
-		responder.HandleError(w, err)
+		c.responder.HandleError(w, err)
 		return
 	}
-	responder.SendJSONResponse(w, respGeo)
+	c.responder.SendJSONResponse(w, respGeo)
 }

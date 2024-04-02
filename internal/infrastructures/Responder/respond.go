@@ -15,7 +15,7 @@ type Responder interface {
 	HandleError(w http.ResponseWriter, err error)
 }
 
-func NewResponder(log *zap.Logger) Responder {
+func NewResponder(log *zap.Logger) *Respond {
 	return &Respond{log: log}
 }
 

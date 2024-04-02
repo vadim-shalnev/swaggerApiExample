@@ -14,9 +14,11 @@ func New_router(controllers *Modules.Controllers, component *components.Componen
 	md := component.TokenManager
 	r.Post("/api/register", controllers.Auth.Register)
 	r.Post("/api/login", controllers.Auth.Login)
+	r.Get("/api/logout", controllers.Auth.Logout)
 	r.Route("/api/user", func(r chi.Router) {
 		r.Use(md.AuthMiddleware)
 		r.Get("/get/{id}", controllers.User.GetUser)
+		r.Put("/update/{id}", controllers.User.UpdateUser)
 		r.Get("/list/", controllers.User.ListUsers)
 		r.Delete("/del/{id}", controllers.User.DelUser)
 	})

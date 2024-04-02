@@ -60,6 +60,7 @@ func (d *Geocodeservice) HandleWorker(ctx context.Context, query mod.RequestQuer
 	defer cancel()
 	cache, err := d.repo.CacheChecker(timeout, query)
 	if err == nil {
+		log.Println("Запрос из кэша")
 		return cache, nil
 	}
 

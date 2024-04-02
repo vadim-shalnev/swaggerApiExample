@@ -6,6 +6,7 @@ import (
 	"github.com/vadim-shalnev/swaggerApiExample/Models"
 	"github.com/vadim-shalnev/swaggerApiExample/internal/infrastructures/Cache"
 	"log"
+	"time"
 )
 
 func NewGeocodeRepository(db *sql.DB, cache Cache.Cache) *Geocoderepository {
@@ -41,6 +42,11 @@ func (r *Geocoderepository) CacheChecker(ctx context.Context, query Models.Reque
 }
 
 func (r *Geocoderepository) Insert(ctx context.Context, email string, query Models.RequestQuery, requestQuery Models.RequestAddress) error {
+	//Добавляем в кэш
+	timeout, cancel := context.WithTimeout(ctx, time.Duration(500)*time.Millisecond)
+	defer cancel()
+	r.Cache.Set(timeout, query.Query, requestQuery, 0)
+	log.Println("Cache added")
 	// Начало транзакции
 	tx, err := r.DB.BeginTx(ctx, nil)
 	if err != nil {

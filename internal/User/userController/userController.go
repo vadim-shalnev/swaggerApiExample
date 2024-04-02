@@ -4,23 +4,25 @@ import (
 	"context"
 	"github.com/go-chi/chi/v5"
 	"github.com/vadim-shalnev/swaggerApiExample/internal/User/userService"
-	responder "github.com/vadim-shalnev/swaggerApiExample/internal/infrastructures/Responder"
+	"github.com/vadim-shalnev/swaggerApiExample/internal/infrastructures/Responder"
 	"log"
 	"net/http"
 	"strings"
 )
 
 type Usercontroller struct {
-	Service userService.UserService
+	Service   userService.UserService
+	responder Responder.Responder
 }
 type UserController interface {
 	GetUser(w http.ResponseWriter, r *http.Request)
 	DelUser(w http.ResponseWriter, r *http.Request)
 	ListUsers(w http.ResponseWriter, r *http.Request)
+	UpdateUser(w http.ResponseWriter, r *http.Request)
 }
 
-func NewUserController(service userService.UserService) *Usercontroller {
-	return &Usercontroller{Service: service}
+func NewUserController(service userService.UserService, responder Responder.Responder) *Usercontroller {
+	return &Usercontroller{Service: service, responder: responder}
 }
 
 // GetUser @Summary Получить информацию о пользователе
@@ -37,11 +39,11 @@ func (c *Usercontroller) GetUser(w http.ResponseWriter, r *http.Request) {
 	userID := chi.URLParam(r, "id")
 	UserInfo, err := c.Service.GetUser(ctx, userID)
 	if err != nil {
-		responder.HandleError(w, err)
+		c.responder.HandleError(w, err)
 		return
 	}
 	log.Println(UserInfo)
-	responder.SendJSONResponse(w, UserInfo)
+	c.responder.SendJSONResponse(w, UserInfo)
 }
 
 // DelUser @Summary Удалить пользователя
@@ -58,20 +60,24 @@ func (c *Usercontroller) DelUser(w http.ResponseWriter, r *http.Request) {
 	userID := chi.URLParam(r, "id")
 	err := c.Service.DelUser(ctx, userID)
 	if err != nil {
-		responder.HandleError(w, err)
+		c.responder.HandleError(w, err)
 		return
 	}
-	responder.SendJSONResponse(w, "Succsec")
+	c.responder.SendJSONResponse(w, "Succsec")
 }
 
-// не отражаю это в свагере, т.к. по идее это админская функция, а не для клиента
+// не отражаю это в свагере, т.к. по идее это админская функция
 func (c *Usercontroller) ListUsers(w http.ResponseWriter, r *http.Request) {
 	Usertoken := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
 	ctx := context.WithValue(r.Context(), "jwt_token", Usertoken)
 	UserInfo, err := c.Service.ListUsers(ctx)
 	if err != nil {
-		responder.HandleError(w, err)
+		c.responder.HandleError(w, err)
 		return
 	}
-	responder.SendJSONResponse(w, UserInfo)
+	c.responder.SendJSONResponse(w, UserInfo)
+}
+
+func (c *Usercontroller) UpdateUser(w http.ResponseWriter, r *http.Request) {
+
 }
